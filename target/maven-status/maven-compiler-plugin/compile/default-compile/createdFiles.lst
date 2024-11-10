@@ -1,0 +1,9 @@
+com\ar\askgaming\betterclans\ClanShop.class
+com\ar\askgaming\betterclans\ClansManager$1.class
+com\ar\askgaming\betterclans\Commands.class
+com\ar\askgaming\betterclans\Clan.class
+com\ar\askgaming\betterclans\ClansManager.class
+com\ar\askgaming\betterclans\FilesManager.class
+com\ar\askgaming\betterclans\Listeners\InventoryCloseListener.class
+com\ar\askgaming\betterclans\BetterClans.class
+com\ar\askgaming\betterclans\Listeners\EntityDamageByEntityListener.class

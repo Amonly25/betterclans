@@ -1,0 +1,12 @@
+main: com.ar.askgaming.betterclans.BetterClans
+name: BetterClans
+api-version: 1.21
+version: 1
+author: AMONLY
+commands:
+  clans:
+    description: Main command for BetterClans
+    usage: /clans <subcommand> [args]
+    aliases: [clan, bc]
+    permission: betterclans.clans
+  
