@@ -48,7 +48,9 @@ public class Clan implements ConfigurationSerializable{
         if (!clanFile.exists()){
             try {
                 clanFile.createNewFile();
-                owner.sendMessage("Has creado el clan con exito");
+                Bukkit.getOnlinePlayers().forEach(p -> {
+                    p.sendMessage(owner.getName() + " has created the clan " + name);
+                });
             } catch (Exception e) {
                 e.printStackTrace();
                 owner.sendMessage("Error creating clan ");
@@ -87,12 +89,12 @@ public class Clan implements ConfigurationSerializable{
         home = (Location) map.get("home");
         balance = (double) map.get("balance");
 
-        FilesManager filesManager = plugin.getFilesManager();
-        members = filesManager.loadUUIDList(map.get("members"));
-        officers = filesManager.loadUUIDList(map.get("officers"));
-        recruits = filesManager.loadUUIDList(map.get("recruits"));
-        allies = filesManager.loadStringList(map.get("allies"));
-        enemies = filesManager.loadStringList(map.get("enemies"));
+        UtilityMethods u = plugin.getUtilityMethods();
+        members = u.loadUUIDList(map.get("members"));
+        officers = u.loadUUIDList(map.get("officers"));
+        recruits = u.loadUUIDList(map.get("recruits"));
+        allies = u.loadStringList(map.get("allies"));
+        enemies = u.loadStringList(map.get("enemies"));
         
         List<ItemStack> items = (List<ItemStack>) map.get("inventory_content");
         loadInventory(items, (int) map.get("inventory_size"));
@@ -205,7 +207,9 @@ public class Clan implements ConfigurationSerializable{
         return name;
     }
     public void setName(String name) {
+        clanConfig.set(this.name, null);
         this.name = name;
+        clanConfig.set(name, this);
         save();
     }
     public String getTag() {

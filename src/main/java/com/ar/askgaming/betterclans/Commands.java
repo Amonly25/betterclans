@@ -1,5 +1,6 @@
 package com.ar.askgaming.betterclans;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+
+import com.ar.askgaming.betterclans.Managers.ClansManager;
+import com.ar.askgaming.betterclans.Managers.ClansManager.Permission;
 
 public class Commands implements TabExecutor{
 
@@ -20,7 +24,7 @@ public class Commands implements TabExecutor{
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        return List.of("create", "remove", "inventory", "sethome", "home", "invite", "join", "leave", "kick", "ally", "enemy", "war","shop","help");
+        return List.of("create", "remove", "inventory", "set", "home", "invite", "join", "leave", "kick", "ally", "enemy", "war","shop","help");
     }
 
     @Override
@@ -73,8 +77,8 @@ public class Commands implements TabExecutor{
             case "war":
                 warClan(p, args);
                 break;
-            case "sethome":
-                setHome(p, args);
+            case "set":
+                set(p, args);
                 break;
             case "shop":
                 shop(p, args);
@@ -99,92 +103,92 @@ public class Commands implements TabExecutor{
             return;
         }
         String name = args[1];
-        if (name.length() > 16){
-            p.sendMessage("The name of the clan can't be longer than 16 characters");
-            return;
-        }
-        if (name.length() < 4){
-            p.sendMessage("The name of the clan can't be shorter than 4 characters");
-            return;
-        }
-        if (clans.getClanByName(name.toLowerCase()) != null){
-            p.sendMessage("The clan name is already in use");
-            return;
-        }
-        //Check vault and then create
-        if (clans.createClan(name, p)){
-            p.sendMessage("Clan created successfully");
-        } else {
-            p.sendMessage("An error occurred while creating the clan");
-        }
+
+        if (plugin.getUtilityMethods().hasValidLength(name, 6, 16)){
+            clans.createClan(name, p);
+        } else p.sendMessage("The name must be between 6 and 16 characters");
+        
     }
     //#region remove
     public void removeClan(Player p, String[] args){
-        Clan clan = clans.getClanByOwner(p);
-        if (clan == null){
-            return;
-        }
+        if (clans.hasClanPermission(p, Permission.REMOVE)){
 
-        if (clans.removeClan(clan)){
-            p.sendMessage("Clan removed successfully");
-        }
+            if (clans.removeClan(clans.getClanByPlayer(p))){
+                p.sendMessage("Clan removed successfully");
+            } 
+        } 
     }
     //#region inventory
     public void openInventoryClan(Player p, String[] args){
-        Clan clan = clans.getClanByPlayer(p);
-        if (clan == null){
-            p.sendMessage("You are not in a clan");
-            return;
-        }
-        if (clans.hasInventoryPermission(p)){
-            p.openInventory(clan.getInventory());
-            return;
 
-        }
-        p.sendMessage("You don't have permission to open the clan inventory");
+        if (clans.hasClanPermission(p, Permission.INVENTORY)){
+            p.openInventory(clans.getClanByPlayer(p).getInventory());
+            return;
+        } 
     }
-    //#region sethome
-    public void setHome(Player p, String[] args){
+    //#region set
+    public void set(Player p, String[] args){
+        // CONFIG ALL THE SETTINGS
         Clan clan = clans.getClanByPlayer(p);
         if (clan == null){
             p.sendMessage("You are not in a clan");
             return;
         }
-        if (clans.hasSetHomePermission(p)){
-            clan.setHome(p.getLocation());
-            p.sendMessage("Home set successfully");
+        if (args.length < 2){
+            p.sendMessage("Usage: /clan sethome");
             return;
         }
-        p.sendMessage("You don't have permission to set the home");
+
+        if (!clans.hasClanPermission(p, Permission.valueOf(args[1].toUpperCase()))){
+            return;
+        }
+
+        String s = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+
+        switch (args[1].toLowerCase()) {
+            case "home":
+                clan.setHome(p.getLocation());
+                p.sendMessage("Home set successfully");
+                break;
+            case "tag":
+                if (plugin.getUtilityMethods().hasValidLength(s, 3, 8)){
+                    clan.setTag(s);
+                } else p.sendMessage("The name must be between 3 and 8 characters");
+   
+                break;
+            case "description":
+                if (plugin.getUtilityMethods().hasValidLength(s, 8, 32)){
+                    clan.setDescription(s);
+                } else p.sendMessage("The name must be between 8 and 32 characters");
+                break;  
+            case "name":
+                if (plugin.getUtilityMethods().hasValidLength(s, 6, 16)){
+                    clan.setName(s);
+                } else p.sendMessage("The name must be between 6 and 16 characters");
+                break;      
+            default:
+                p.sendMessage("Usage: /clan set <home/tag/description/name>");
+                break;
+        }
     }
     //#region home
     public void home(Player p, String[] args){
         Clan clan = clans.getClanByPlayer(p);
-        if (clan == null){
-            p.sendMessage("You are not in a clan");
-            return;
-        }
-        if (clan.getHome() == null){
-            p.sendMessage("The clan doesn't have a home");
-            return;
-        }
-        if (!clans.hasHomePermission(p)){
-            p.sendMessage("No tienes permiso para ir a la base del clan");
-            return;
-        }
-        clans.teleport(p, clan.getHome());
+        if (clans.hasClanPermission(p, Permission.HOME)){
+            if (clan.getHome() == null){
+                p.sendMessage("The clan doesn't have a home");
+                return;
+            }
+            plugin.getUtilityMethods().teleport(p, clan.getHome());
+        } 
     }
     //#region invite
     public void invitePlayer(Player p, String[] args){
         Clan clan = clans.getClanByPlayer(p);
-        if (clan == null){
-            p.sendMessage("You are not in a clan");
+        if (!clans.hasClanPermission(p, Permission.INVITE)){
             return;
         }
-        if (!clans.hasKickInvitePermission(p)){
-            p.sendMessage("You don't have permission to invite players");
-            return;
-        }
+
         if (args.length < 2){
             p.sendMessage("Usage: /clan invite <player>");
             return;
@@ -245,19 +249,16 @@ public class Commands implements TabExecutor{
     }
     //#region kick
     public void kickPlayer(Player p, String[] args){
-        Clan clan = clans.getClanByPlayer(p);
-        if (clan == null){
-            p.sendMessage("You are not in a clan");
+
+        if (!clans.hasClanPermission(p, Permission.KICK)){
             return;
         }
-        if (clans.hasKickInvitePermission(p)){
-            p.sendMessage("You don't have permission to kick players");
-            return;
-        }
+
         if (args.length < 2){
             p.sendMessage("Usage: /clan kick <player>");
             return;
         }
+        Clan clan = clans.getClanByPlayer(p);
         OfflinePlayer kicked = plugin.getServer().getPlayer(args[1]);
 
         if (clan.getOwner().equals(kicked.getUniqueId())){
@@ -276,30 +277,21 @@ public class Commands implements TabExecutor{
     }
     //#region promote
     public void promotePlayer(Player p, String[] args){
+        if (!clans.hasClanPermission(p, Permission.PROMOTE)){
+            return;
+        }
+
         Clan clan = clans.getClanByOwner(p);
-        if (clan == null){
-            p.sendMessage("No puedes hacer eso.");
-            return;
-        }
-        if (args.length < 2){
-            p.sendMessage("Usage: /clan promote <player>");
-            return;
-        }
         OfflinePlayer promoted = plugin.getServer().getPlayer(args[1]);
         clan.promotePlayer(clan, promoted);
     }
     //#endregion
     //#region demote
     public void demotePlayer(Player p, String[] args){
+        if (!clans.hasClanPermission(p, Permission.DEMOTE)){
+            return;
+        }
         Clan clan = clans.getClanByOwner(p);
-        if (clan == null){
-            p.sendMessage("No puedes hacer eso");
-            return;
-        }
-        if (args.length < 2){
-            p.sendMessage("Usage: /clan demote <player>");
-            return;
-        }
         OfflinePlayer demoted = plugin.getServer().getPlayer(args[1]);
         clan.demotePlayer(clan, demoted);
     }
@@ -326,20 +318,16 @@ public class Commands implements TabExecutor{
     //#endregion
     //#region ally
     public void allyClan(Player p, String[] args){
-        Clan clan = clans.getClanByPlayer(p);
-        if (clan == null){
-            p.sendMessage("You are not in a clan");
+        if (!clans.hasClanPermission(p, Permission.ALLY)){
             return;
         }
-        if (args.length < 2){
-            p.sendMessage("Usage: /clan ally <clan>");
-            return;
-        }
+
         Clan ally = clans.getClanByName(args[1]);
         if (ally == null){
             p.sendMessage("The clan doesn't exist");
             return;
         }
+        Clan clan = clans.getClanByPlayer(p);
         if (clan.getAllies().contains(ally.getName())){
             clan.removeAlly(ally);
             p.sendMessage("Ally removed successfully");
@@ -351,9 +339,7 @@ public class Commands implements TabExecutor{
     //#endregion
     //#region enemy
     public void enemyClan(Player p, String[] args){
-        Clan clan = clans.getClanByPlayer(p);
-        if (clan == null){
-            p.sendMessage("You are not in a clan");
+        if (!clans.hasClanPermission(p, Permission.ENEMY)){
             return;
         }
         if (args.length < 2){
@@ -365,6 +351,7 @@ public class Commands implements TabExecutor{
             p.sendMessage("The clan doesn't exist");
             return;
         }
+        Clan clan = clans.getClanByPlayer(p);
         if (clan.getEnemies().contains(enemy.getName())){
             clan.removeEnemy(enemy);
             p.sendMessage("Enemy removed successfully");
@@ -378,30 +365,7 @@ public class Commands implements TabExecutor{
     //#region war
     public void warClan(Player p, String[] args){
         p.sendMessage("En desarrollo");
-        // Clan clan = clans.getClanByPlayer(p);
-        // if (clan == null){
-        //     p.sendMessage("You are not in a clan");
-        //     return;
-        // }
-        // if (args.length < 2){
-        //     p.sendMessage("Usage: /clan war <clan>");
-        //     return;
-        // }
-        // Clan enemy = clans.getClanByName(args[1]);
-        // if (enemy == null){
-        //     p.sendMessage("The clan doesn't exist");
-        //     return;
-        // }
-        // if (!clan.getEnemies().contains(enemy.getName())){
-        //     p.sendMessage("The clan is not an enemy");
-        //     return;
-        // }
-        // if (clan.getWars().contains(enemy.getName())){
-        //     p.sendMessage("The clan is already at war");
-        //     return;
-        // }
-        // clan.addWar(enemy);
-        // p.sendMessage("War started successfully");
+
     }
     //#endregion
     //#region shop

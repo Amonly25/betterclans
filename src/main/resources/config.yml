@@ -1,0 +1,21 @@
+#Owner clan has all permissions
+permissions:
+  officer:
+    - INVITE
+    - KICK
+    - SET
+    - DEMOTE
+    - HOME
+    - INVENTORY
+    - DEPOSIT
+    - WITHDRAW
+    - BUY
+    - WAR
+    - ENEMY
+    - ALLY
+  member:
+    - HOME
+    - INVENTORY
+    - DEPOSIT
+  recruit:
+    - NONE
