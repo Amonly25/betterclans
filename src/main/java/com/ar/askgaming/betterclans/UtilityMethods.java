@@ -57,14 +57,11 @@ public class UtilityMethods {
 
     public List<String> loadStringList(Object obj) {
         List<String> list = new ArrayList<>();
-        if (obj instanceof String) {
-            String str = (String) obj;
-            String[] array = str.replace("[", "").replace("]", "").split(",\\s*");
-            for (String item : array) {
-                if (item.isEmpty()) {
-                    continue;
+        if (obj instanceof List) {
+            for (Object item : (List<?>) obj) {
+                if (item instanceof String) {
+                    list.add((String) item);
                 }
-                list.add(item);
             }
         }
         return list;

@@ -104,8 +104,19 @@ public class ClansManager {
     }
     public boolean isInClan(Clan clan, OfflinePlayer p){
         UUID playerId = p.getUniqueId();
-        return clan.getOwner().equals(playerId) || clan.getMembers().contains(playerId) ||
-               clan.getOfficers().contains(playerId) || clan.getRecruits().contains(playerId);
+        if (clan.getOwner().equals(playerId)){
+            return true;
+        } 
+        if (clan.getMembers().contains(playerId)){
+            return true;
+        }
+        if (clan.getOfficers().contains(playerId)){
+            return true;
+        }
+        if (clan.getRecruits().contains(playerId)){
+            return true;
+        }
+        return false;
     }
 
     public Clan getClanByOwner(Player p) {

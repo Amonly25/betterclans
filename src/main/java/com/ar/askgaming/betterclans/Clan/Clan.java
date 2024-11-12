@@ -51,7 +51,7 @@ public class Clan implements ConfigurationSerializable{
             try {
                 clanFile.createNewFile();
                 Bukkit.getOnlinePlayers().forEach(p -> {
-                    p.sendMessage(plugin.getFilesManager().getLang("misc.create_broadcast", p).replace("{owner}", owner.getName()).replace("{clan}", name));
+                    p.sendMessage(plugin.getFilesManager().getLang("misc.create_broadcast", p).replace("{player}", owner.getName()).replace("{clan}", name));
                 });
             } catch (Exception e) {
                 e.printStackTrace();
@@ -142,25 +142,32 @@ public class Clan implements ConfigurationSerializable{
 
         save();
     }
-    public void promotePlayer(Clan clan, OfflinePlayer p){
+    public boolean promotePlayer(Clan clan, OfflinePlayer p){
         UUID playerId = p.getUniqueId();
         if (getRecruits().remove(playerId)) {
             getMembers().add(playerId);
+            save() ;
+            return true;
         } else if (getMembers().remove(playerId)) {
             getOfficers().add(playerId);
+            save() ;
+            return true;
         }
 
-        save() ;
+        return false;
     }
-    public void demotePlayer(Clan clan, OfflinePlayer p){
+    public boolean demotePlayer(Clan clan, OfflinePlayer p){
         UUID playerId = p.getUniqueId();
         if (getOfficers().remove(playerId)) {
             getMembers().add(playerId);
+            save() ;
+            return true;
         } else if (getMembers().remove(playerId)) {
             getRecruits().add(playerId);
+            save() ;
+            return true;
         }
-
-        save();
+        return false;
     }
     public void addAlly(Clan ally){
         allies.add(ally.getName());
@@ -185,7 +192,6 @@ public class Clan implements ConfigurationSerializable{
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private String name;

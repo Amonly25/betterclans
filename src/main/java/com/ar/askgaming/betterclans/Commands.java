@@ -280,13 +280,13 @@ public class Commands implements TabExecutor{
             return;
         }
         Clan clan = clans.getClanByPlayer(p);
-        OfflinePlayer kicked = plugin.getServer().getPlayer(args[1]);
+        OfflinePlayer kicked = Bukkit.getPlayer(args[1]);
 
         if (clan.getOwner().equals(kicked.getUniqueId())){
             p.sendMessage(files.getLang("clan.no_permission", p));
             return;
         }
-        if (clans.isInClan(clan, kicked)){
+        if (!clans.isInClan(clan, kicked)){
             p.sendMessage(files.getLang("clan.no_in_clan", p));
             return;
         }
@@ -304,12 +304,17 @@ public class Commands implements TabExecutor{
 
         Clan clan = clans.getClanByOwner(p);
         OfflinePlayer promoted = plugin.getServer().getPlayer(args[1]);
-        if (clans.isInClan(clan, promoted)){
+        if (!clans.isInClan(clan, promoted)){
             p.sendMessage(files.getLang("clan.no_in_clan", p));
             return;
 
         }
-        clan.promotePlayer(clan, promoted);
+        if (clan.promotePlayer(clan, promoted)){
+            p.sendMessage(files.getLang("clan.promote", p).replace("{player}", args[1]));
+            if (promoted.isOnline()){
+                promoted.getPlayer().sendMessage(files.getLang("clan.promoted", p).replace("{clan}", clan.getName()));
+            }
+        } else p.sendMessage(files.getLang("misc.cant_promote_demote", p));
     }
     //#endregion
     //#region demote
@@ -319,12 +324,18 @@ public class Commands implements TabExecutor{
         }
         Clan clan = clans.getClanByOwner(p);
         OfflinePlayer demoted = plugin.getServer().getPlayer(args[1]);
-        if (clans.isInClan(clan, demoted)){
+        if (!clans.isInClan(clan, demoted)){
             p.sendMessage(files.getLang("clan.no_in_clan", p));
             return;
 
         }
-        clan.demotePlayer(clan, demoted);
+
+        if (clan.demotePlayer(clan, demoted)){
+            p.sendMessage(files.getLang("clan.demote", p).replace("{player}", args[1]));
+            if (demoted.isOnline()){
+                demoted.getPlayer().sendMessage(files.getLang("clan.demoted", p).replace("{clan}", clan.getName()));
+            }
+        }else p.sendMessage(files.getLang("misc.cant_promote_demote", p));
     }
     //#endregion
     //#region info
@@ -362,29 +373,50 @@ public class Commands implements TabExecutor{
             p.sendMessage(files.getLang("clan.no_exists", p));
             return;
         }
+
         //If the clan is already an ally, remove it
         Clan clan = clans.getClanByPlayer(p);
+        if (ally.equals(clan)){
+            p.sendMessage(files.getLang("clan.cant_self", p));
+            return;
+        }
         if (clan.getAllies().contains(ally.getName())){
             clan.removeAlly(ally);
-            p.sendMessage(files.getLang("clan.ally_removed", p).replace("{clan}", ally.getName()));
+            ally.removeAlly(clan);
+            clans.getAllClanMembers(clan).forEach(player -> {
+                player.sendMessage(files.getLang("clan.ally_removed", p).replace("{clan}", ally.getName()));
+            });
+            clans.getAllClanMembers(ally).forEach(player -> {
+                player.sendMessage(files.getLang("clan.ally_removed", p).replace("{clan}", clan.getName()));
+            });
+
             return;
         }
         //Else send the request
-        if (clans.getInvitedAlly().containsValue(ally)){
+        if (clans.getInvitedAlly().containsKey(clan) && clans.getInvitedAlly().get(clan).equals(ally)) {
             p.sendMessage(files.getLang("clan.already_ally_invited", p));
             return;
         }
-        if (clans.getInvitedAlly().containsKey(ally) && clans.getInvitedAlly().get(ally).equals(clan)){
+        // Verifica si la solicitud de alianza ha sido aceptada
+        if (clans.getInvitedAlly().containsKey(ally) && clans.getInvitedAlly().get(ally).equals(clan)) {
             ally.addAlly(clan);
             clan.addAlly(ally);
-            p.sendMessage(files.getLang("clan.ally", p).replace("{clan}", ally.getName()));
+            clans.getInvitedAlly().remove(clan);
+            clans.getInvitedAlly().remove(ally);
+            clans.getAllClanMembers(clan).forEach(player -> {
+                player.sendMessage(files.getLang("clan.ally", p).replace("{clan}", ally.getName()));
+            });
+            clans.getAllClanMembers(ally).forEach(player -> {
+                player.sendMessage(files.getLang("clan.ally", p).replace("{clan}", clan.getName()));
+            });
             return;
         }
+
+        // Envía una solicitud de alianza
         clans.getInvitedAlly().put(clan, ally);
-        p.sendMessage(files.getLang("clan.ally", p).replace("{clan}", ally.getName()));
-        clans.getAllClanMembers(clan).forEach(player -> {
-            player.sendMessage(files.getLang("clan.ally_request", p).replace("{clan}", ally.getName()));
-            
+        p.sendMessage(files.getLang("clan.ally_sent", p).replace("{clan}", ally.getName()));
+        clans.getAllClanMembers(ally).forEach(player -> {
+            player.sendMessage(files.getLang("clan.ally_request", p).replace("{clan}", clan.getName()));
         });
     }
     //#endregion
@@ -398,11 +430,21 @@ public class Commands implements TabExecutor{
             return;
         }
         Clan enemy = clans.getClanByName(args[1]);
+
         if (enemy == null){
             p.sendMessage(files.getLang("clan.no_exists", p));
             return;
         }
         Clan clan = clans.getClanByPlayer(p);
+        if (clan.getAllies().contains(enemy.getName())){
+            p.sendMessage(files.getLang("clan.cant_ally_enemy", p));
+            return;
+
+        }
+        if (enemy.equals(clan)){
+            p.sendMessage(files.getLang("clan.cant_self", p));
+            return;
+        }
         if (clan.getEnemies().contains(enemy.getName())){
             clan.removeEnemy(enemy);
             p.sendMessage(files.getLang("clan.enemy_removed", p).replace("{clan}", enemy.getName()));

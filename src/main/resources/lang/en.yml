@@ -23,13 +23,18 @@ clan:
   leave: "&cYou have left the clan {clan}!"
   kick: "&aYou have kicked {player} from your clan!"
   kicked: "&cYou have been kicked from the clan {clan}!"
-  ally: "&aYou have requested an alliance with the clan {clan}!"
-  ally_remove: "&aYou have removed the alliance with the clan {clan}!"
+  ally_sent: "&aYou have requested an alliance with the clan {clan}!"
+  ally: "&aNow you are allies with the clan {clan}!"
+  ally_removed: "&aYou have removed the alliance with the clan {clan}!"
   ally_request: "&aThe clan {clan} has requested an alliance with you! Use /clan ally {clan} to accept!"
   enemy: "&aYou made the clan {clan} your enemy!"
-  enemy_remove: "&aYou have removed the enemy with the clan {clan}!"
+  enemy_remove: "&cYou have removed the enemy with the clan {clan}!"
   war: "&aYou have declared war on the clan {clan}!"
   chat: "&aYou have changued to the {type} chat!"
+  demote: "&aYou have demoted {player} in your clan!"
+  demoted: "&cYou have been demoted in your clan!"
+  promote: "&aYou have promoted {player} in your clan!"
+  promoted: "&aYou have been promoted in your clan!"
 
 
 misc:
@@ -40,6 +45,9 @@ misc:
   teleport_cancel: "&cTeleportation cancelled, you moved!"
   pages: "List of clans: Page:"
   cant_leave: "&cYou can't leave the clan while you are the leader!"
+  cant_promote_demote: "&cYou can't promote or demote that player!"
+  cant_self: "&cYou can't set an enemy or ally with your own clan!"
+  cant_ally_enemy: "&cYou can't set an enemy to your ally!"
 
 info:
 
@@ -52,14 +60,13 @@ help:
   - "&a/clan leave &7- Leave your clan"
   - "&a/clan info &7- Show information about your clan"
   - "&a/clan list &7- Show a list of all clans"
-  - "&a/clan ally <clan> &7- Request an alliance with another clan"
-  - "&a/clan enemy <clan> &7- Request an enemy with another clan"
+  - "&a/clan ally/enemy <clan> &7- Request an alliance or set an enemy"
   - "&a/clan war <clan> &7- Use /war info to see more"
   - "&a/clan home &7- Teleport to your clan base"
   - "&a/clan inventory &7- Open your clan inventory"
   - "&a/clan shop &7- Open clan shop"
   - "&a/clan deposit/withdraw &7- Manage your clan bank"
-  - "&a/clan set <homee/tag/name/description> &7- Set your clan settings"
+  - "&a/clan set <home/tag/name/description> &7- Set your clan settings"
   - "&a/clan chat <global/clan/ally>&7- Toggle clan chat"
   - "&a/clan promote/demote &7- Promote or demote a player in your clan"
 
