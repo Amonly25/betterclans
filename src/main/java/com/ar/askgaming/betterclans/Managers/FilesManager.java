@@ -33,7 +33,7 @@ public class FilesManager {
             plugin.saveResource("lang/es.yml", false);
         }
     }
-        public String getLang(String path, Player p) {
+    public String getLang(String path, Player p) {
 
         File file = new File(plugin.getDataFolder() + "/lang/" + p.getLocale().split("_")[0] + ".yml");
         String required = "";
@@ -84,5 +84,10 @@ public class FilesManager {
         }
 
         return lang.getString(path,"Undefined");
+    }
+    public void langBroadcast(String path) {
+        for (Player p : plugin.getServer().getOnlinePlayers()) {
+            p.sendMessage(getLang(path, p));
+        }
     }
 }

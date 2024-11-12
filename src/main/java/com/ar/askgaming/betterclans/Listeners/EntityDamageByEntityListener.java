@@ -37,7 +37,7 @@ public class EntityDamageByEntityListener implements Listener {
 
                 if (timeSinceLastHit > cooldownTime) {
                     // Si el tiempo transcurrido es menor que el cooldown, enviar el mensaje y actualizar el último golpe
-                    damager.sendMessage("You can't damage allies");
+                    damager.sendMessage(plugin.getFilesManager().getLang("misc.cant_damage_ally", damaged));
                     lastHit.put(damager, System.currentTimeMillis());
                 }
             }   

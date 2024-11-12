@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Function;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -52,12 +51,10 @@ public class Clan implements ConfigurationSerializable{
             try {
                 clanFile.createNewFile();
                 Bukkit.getOnlinePlayers().forEach(p -> {
-                    p.sendMessage(owner.getName() + " has created the clan " + name);
+                    p.sendMessage(plugin.getFilesManager().getLang("misc.create_broadcast", p).replace("{owner}", owner.getName()).replace("{clan}", name));
                 });
             } catch (Exception e) {
                 e.printStackTrace();
-                owner.sendMessage("Error creating clan ");
-
                 return;
             }
         }
@@ -107,8 +104,6 @@ public class Clan implements ConfigurationSerializable{
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
         
-        Function<List<UUID>, String> listToString = l -> (l == null) ? "" : l.toString();
-
         map.put("name", name);
         map.put("tag", tag);
         map.put("description", description);
