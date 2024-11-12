@@ -46,7 +46,8 @@ public class ClanChat {
             clanName = clan.getTag();
         }
         String colored = ChatColor.translateAlternateColorCodes('&', format);
-        event.setFormat(colored.replace("{player}", pName).replace("{clan}", clanName).replace("{message}", event.getMessage()));
+        format = colored.replace("{player}", pName).replace("{clan}", clanName).replace("{message}", event.getMessage());
+        event.setFormat(ChatColor.translateAlternateColorCodes('&', format));
 
     }
     public void broadCastClanMessage(ChatType chatType, Player player, String message) {
