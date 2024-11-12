@@ -21,6 +21,7 @@ public class ClansManager {
     private BetterClans plugin;
 
     private HashMap<String, Player> invited = new HashMap<>();
+    private HashMap<Clan, Clan> invitedAlly = new HashMap<>();
 
     public ClansManager(BetterClans plugin) {
         this.plugin = plugin;
@@ -55,18 +56,22 @@ public class ClansManager {
 
     public boolean createClan(String name, Player owner){
         if (clans.containsKey(name)){
-            owner.sendMessage("Ya existe un clan con ese nombre");
+            owner.sendMessage(plugin.getFilesManager().getLang("clan.already_exists", owner));
             return false;
         }
-        owner.sendMessage("Has creado el clan con exito");
         new Clan(name, owner);
         return true;
     }
     public boolean removeClan(Clan clan){
+        try {
+            clan.getClanFile().delete();
+            clans.remove(clan.getName());
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        clan.getClanFile().delete();
-        clans.remove(clan.getName());
-        return true;
+        return false;
     }
 
     private HashMap<String, Clan> clans = new HashMap<>();
@@ -91,7 +96,9 @@ public class ClansManager {
     public HashMap<String, Player> getInvited() {
         return invited;
     }
-
+    public HashMap<Clan, Clan> getInvitedAlly() {
+        return invitedAlly;
+    }
     public boolean hasClan(Player p){
         return getClanByPlayer(p) != null;
     }
@@ -148,7 +155,7 @@ public class ClansManager {
     public boolean hasClanPermission(Player p, Permission permission){
         Clan clan = getClanByPlayer(p);
         if (clan == null) {
-            p.sendMessage("No tienes un clan");
+            p.sendMessage(plugin.getFilesManager().getLang("clan.no_clan", p));
             return false;
         }
         if (p.isOp() || clan.getOwner().equals(p.getUniqueId())) {
@@ -169,7 +176,7 @@ public class ClansManager {
                 }
             }
         }
-        p.sendMessage("No tienes permisos para hacer eso");
+        p.sendMessage(plugin.getFilesManager().getLang("clan.no_permission", p));
         return false;
     }
     public List<String> getAllClans(){

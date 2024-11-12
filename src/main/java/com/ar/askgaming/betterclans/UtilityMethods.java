@@ -17,13 +17,8 @@ public class UtilityMethods {
 
     public void teleport(Player p, Location l){
 
-        if (l == null) {
-            p.sendMessage("There is no location available");
-            return;
-        }
-
         final int z = p.getLocation().getBlockZ(), x = p.getLocation().getBlockX();
-        p.sendMessage("Seras teletransportado en 3 segundos, no te muevas.");
+        p.sendMessage(plugin.getFilesManager().getLang("misc.teleport_start", p));
         new BukkitRunnable() {		
             int count = 3;
             
@@ -36,7 +31,7 @@ public class UtilityMethods {
                     return;
                 }	    	    	                                    	    	                        
                 if (z != p.getLocation().getBlockZ() || x != p.getLocation().getBlockX()){
-                    p.sendMessage("No te puedes mover al teleportarte");
+                    p.sendMessage(plugin.getFilesManager().getLang("misc.teleport_cancel", p));
                     cancel();
                     return;
                 }
@@ -94,21 +89,20 @@ public class UtilityMethods {
             try {
                 page = Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
-                p.sendMessage("Invalid page number");
+                p.sendMessage(plugin.getFilesManager().getLang("commands.invalid_page", p));
                 return;
             }
         }
 
         int totalPages = (int) Math.ceil(list.size() / 10.0);
         if (page > totalPages || page < 1) {
-            p.sendMessage("Invalid page number");
+            p.sendMessage(plugin.getFilesManager().getLang("commands.invalid_page", p));
             return;
         }
 
         int start = (page - 1) * 10;
         int end = Math.min(start + 10, list.size());
-
-        p.sendMessage("Clans (Page " + page + "/" + totalPages + "):");
+        p.sendMessage(plugin.getFilesManager().getLang("misc.pages", p) + " " + page + "/" + totalPages);
         for (int i = start; i < end; i++) {
             String clan = list.get(i);
             p.sendMessage((i + 1) + ". " + clan);

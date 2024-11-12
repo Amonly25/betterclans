@@ -1,6 +1,5 @@
 package com.ar.askgaming.betterclans.Listeners;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,7 +21,6 @@ public class InventoryCloseListener implements Listener{
         Clan clan = plugin.getClansManager().getClanByPlayer(p);
         if (clan == null) return;
         if (e.getInventory().equals(clan.getInventory())){
-            Bukkit.broadcastMessage("test");
             clan.save();
         }       
     }  
