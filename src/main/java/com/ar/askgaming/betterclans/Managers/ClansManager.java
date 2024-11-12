@@ -1,6 +1,7 @@
 package com.ar.askgaming.betterclans.Managers;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +13,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.ar.askgaming.betterclans.BetterClans;
-import com.ar.askgaming.betterclans.Clan;
 import com.ar.askgaming.betterclans.UtilityMethods;
+import com.ar.askgaming.betterclans.Clan.Clan;
 
 public class ClansManager {
 
@@ -170,5 +171,42 @@ public class ClansManager {
         }
         p.sendMessage("No tienes permisos para hacer eso");
         return false;
+    }
+    public List<String> getAllClans(){
+        return List.copyOf(clans.keySet());
+    }
+    public List<Player> getAllClanMembers(Clan clan) {
+        List<Player> players = new ArrayList<>();
+        addOnlinePlayer(players, clan.getOwner());
+        addOnlinePlayers(players, clan.getMembers());
+        addOnlinePlayers(players, clan.getOfficers());
+        addOnlinePlayers(players, clan.getRecruits());
+        return players;
+    }
+    public List<Player> getAllAlliedClanMembers(Clan clan) {
+        List<Player> players = new ArrayList<>();
+        for (String allyName : clan.getAllies()) {
+            Clan allyClan = getClanByName(allyName);
+            if (allyClan != null) {
+                addOnlinePlayer(players, allyClan.getOwner());
+                addOnlinePlayers(players, allyClan.getMembers());
+                addOnlinePlayers(players, allyClan.getOfficers());
+                addOnlinePlayers(players, allyClan.getRecruits());
+            }
+        }
+        return players;
+    }
+    
+    private void addOnlinePlayer(List<Player> players, UUID playerId) {
+        Player player = plugin.getServer().getPlayer(playerId);
+        if (player != null && player.isOnline()) {
+            players.add(player);
+        }
+    }
+    
+    private void addOnlinePlayers(List<Player> players, List<UUID> playerIds) {
+        for (UUID id : playerIds) {
+            addOnlinePlayer(players, id);
+        }
     }
 }

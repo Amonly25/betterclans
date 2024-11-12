@@ -10,6 +10,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
+import com.ar.askgaming.betterclans.Clan.Clan;
+import com.ar.askgaming.betterclans.Clan.ClanChat.ChatType;
 import com.ar.askgaming.betterclans.Managers.ClansManager;
 import com.ar.askgaming.betterclans.Managers.ClansManager.Permission;
 
@@ -86,8 +88,20 @@ public class Commands implements TabExecutor{
             case "home":
                 home(p, args);
                 break;        
-            default:
+            case "info":
                 infoClan(p, args);
+                break;
+            case "help":
+                help(p, args);
+                break;
+            case "list":
+                listClans(p, args);
+                break;    
+            case "chat":
+                chatClan(p, args);
+                break;
+            default:
+                help(p, args);
                 break;
         }
         return true;
@@ -139,7 +153,7 @@ public class Commands implements TabExecutor{
             return;
         }
 
-        if (!clans.hasClanPermission(p, Permission.valueOf(args[1].toUpperCase()))){
+        if (!clans.hasClanPermission(p, Permission.valueOf(args[0].toUpperCase()))){
             return;
         }
 
@@ -153,17 +167,20 @@ public class Commands implements TabExecutor{
             case "tag":
                 if (plugin.getUtilityMethods().hasValidLength(s, 3, 8)){
                     clan.setTag(s);
+                    p.sendMessage("Tag set successfully");
                 } else p.sendMessage("The name must be between 3 and 8 characters");
    
                 break;
             case "description":
                 if (plugin.getUtilityMethods().hasValidLength(s, 8, 32)){
                     clan.setDescription(s);
+                    p.sendMessage("Description set successfully");
                 } else p.sendMessage("The name must be between 8 and 32 characters");
                 break;  
             case "name":
                 if (plugin.getUtilityMethods().hasValidLength(s, 6, 16)){
                     clan.setName(s);
+                    p.sendMessage("Name set successfully");
                 } else p.sendMessage("The name must be between 6 and 16 characters");
                 break;      
             default:
@@ -373,5 +390,46 @@ public class Commands implements TabExecutor{
         p.sendMessage("En desarrollo");
     }
     //#endregion
-
+    //#region help
+    public void help(Player p, String[] args){
+        p.sendMessage("Usage: /clan <create/remove/inventory/set/home/invite/join/leave/kick/promote/demote/ally/enemy/war/shop/help>");
+    }
+    //#region list
+    public void listClans(Player p, String[] args){
+        List<String> allClans = clans.getAllClans();
+        plugin.getUtilityMethods().listToPage(allClans, args, p);
+    }
+    //#region chat
+    public void chatClan(Player p, String[] args){
+        if (args.length < 2){
+            p.sendMessage("Usage: /clan chat <clan/global/ally>");
+            return;
+        }
+        ChatType chatType;
+        String message;
+    
+        switch (args[1].toLowerCase()) {
+            case "a":
+            case "ally":
+                chatType = ChatType.ALLY;
+                message = "Chat type set to Ally";
+                break;
+            case "c":
+            case "clan":
+                chatType = ChatType.CLAN;
+                message = "Chat type set to Clan";
+                break;
+            case "g":
+            case "global":
+                chatType = ChatType.GLOBAL;
+                message = "Chat type set to Global";
+                break;
+            default:
+                p.sendMessage("Usage: /clan chat <clan/global/ally>");
+                return;
+        }
+    
+        plugin.getClanChat().setChatType(p, chatType);
+        p.sendMessage(message);
+    }
 }

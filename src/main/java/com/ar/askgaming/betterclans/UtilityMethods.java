@@ -23,7 +23,7 @@ public class UtilityMethods {
         }
 
         final int z = p.getLocation().getBlockZ(), x = p.getLocation().getBlockX();
-
+        p.sendMessage("Seras teletransportado en 3 segundos, no te muevas.");
         new BukkitRunnable() {		
             int count = 3;
             
@@ -31,7 +31,6 @@ public class UtilityMethods {
             public void run() {	      
                 
                 if (count == 0) {  
-                    p.sendMessage("Seras teletransportado en 3 segundos");
                     p.teleport(l);        		
                     cancel(); 
                     return;
@@ -88,5 +87,31 @@ public class UtilityMethods {
     }
     public boolean hasValidLength(String str, int min, int max) {
         return str.length() >= min && str.length() <= max;
+    }
+    public void listToPage(List<String> list, String[] args, Player p) {
+        int page = 1;
+        if (args.length > 1) {
+            try {
+                page = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                p.sendMessage("Invalid page number");
+                return;
+            }
+        }
+
+        int totalPages = (int) Math.ceil(list.size() / 10.0);
+        if (page > totalPages || page < 1) {
+            p.sendMessage("Invalid page number");
+            return;
+        }
+
+        int start = (page - 1) * 10;
+        int end = Math.min(start + 10, list.size());
+
+        p.sendMessage("Clans (Page " + page + "/" + totalPages + "):");
+        for (int i = start; i < end; i++) {
+            String clan = list.get(i);
+            p.sendMessage((i + 1) + ". " + clan);
+        }
     }
 }

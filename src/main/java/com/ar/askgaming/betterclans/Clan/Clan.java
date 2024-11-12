@@ -1,4 +1,4 @@
-package com.ar.askgaming.betterclans;
+package com.ar.askgaming.betterclans.Clan;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,6 +17,9 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import com.ar.askgaming.betterclans.BetterClans;
+import com.ar.askgaming.betterclans.UtilityMethods;
 
 public class Clan implements ConfigurationSerializable{
 
@@ -62,12 +65,12 @@ public class Clan implements ConfigurationSerializable{
 
         plugin.getClansManager().getClans().put(name, this);
 
-        setName(name);
-        setOwner(owner.getUniqueId());
-        setLevel(0);
-        setBalance(0);
-        setDescription("name");
-        setTag(name.substring(0, 3));
+        this.name = name;
+        this.owner = owner.getUniqueId();
+        level = 1;
+        balance = 0;
+        description = "";
+        tag = name.substring(0, 3);
         allies = new ArrayList<>();
         enemies = new ArrayList<>();
         members = new ArrayList<>();
@@ -207,10 +210,18 @@ public class Clan implements ConfigurationSerializable{
         return name;
     }
     public void setName(String name) {
-        clanConfig.set(this.name, null);
-        this.name = name;
-        clanConfig.set(name, this);
-        save();
+        File newFile = new File(plugin.getDataFolder() + "/clans/" + name + ".yml");
+        if (clanFile.renameTo(newFile)) {
+            plugin.getClansManager().getClans().remove(this.name.toLowerCase());
+            clanConfig.set(this.name, null);
+            this.name = name;
+            clanFile = newFile;
+            plugin.getClansManager().getClans().put(name.toLowerCase(), this);
+            clanConfig.set(name, this);
+            save();
+        } else {
+            plugin.getLogger().severe("Failed to rename clan file to " + name + ".yml");
+        }
     }
     public String getTag() {
         return tag;

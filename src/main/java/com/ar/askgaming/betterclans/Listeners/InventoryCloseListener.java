@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import com.ar.askgaming.betterclans.BetterClans;
-import com.ar.askgaming.betterclans.Clan;
+import com.ar.askgaming.betterclans.Clan.Clan;
 
 public class InventoryCloseListener implements Listener{
 
