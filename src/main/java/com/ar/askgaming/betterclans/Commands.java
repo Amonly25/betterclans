@@ -41,8 +41,8 @@ public class Commands implements TabExecutor{
         }
         Player p = (Player) sender;
 
-        if (args.length < 1){
-            files.getLang("help", p);
+        if (args.length == 0){
+            p.sendMessage(files.getLang("help", p));
             return true;
         }
 
