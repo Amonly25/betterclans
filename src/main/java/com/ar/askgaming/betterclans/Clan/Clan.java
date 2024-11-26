@@ -68,6 +68,7 @@ public class Clan implements ConfigurationSerializable{
         balance = 0;
         description = "";
         tag = name.substring(0, 3);
+        points = 0;
         allies = new ArrayList<>();
         enemies = new ArrayList<>();
         members = new ArrayList<>();
@@ -88,6 +89,7 @@ public class Clan implements ConfigurationSerializable{
         level = (int) map.get("level");
         home = (Location) map.get("home");
         balance = (double) map.get("balance");
+        points = (int) map.get("points");
 
         UtilityMethods u = plugin.getUtilityMethods();
         members = u.loadUUIDList(map.get("members"));
@@ -118,6 +120,7 @@ public class Clan implements ConfigurationSerializable{
         map.put("balance", balance);
         map.put("allies", allies);
         map.put("enemies", enemies);
+        map.put("points", points);
         return map;
         
     }
@@ -202,13 +205,22 @@ public class Clan implements ConfigurationSerializable{
     private List<UUID> officers;
     private List<UUID> recruits;
     private Inventory inventory;
+    private int points;
     private int level;
     private Location home;
     private double balance;
     private List<String> allies;
     private List<String> enemies;
+
     public String getName() {
         return name;
+    }
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
     public void setName(String name) {
         File newFile = new File(plugin.getDataFolder() + "/clans/" + name + ".yml");

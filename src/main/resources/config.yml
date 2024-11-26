@@ -8,7 +8,6 @@ chat_feature:
   global: '&7[&8{clan}&7]&r {player}&7: {message}'
   clan: "&aClan &7chat > &8{player}: &a{message}"
   ally:  "&bAlly &7chat > &8{player}: &b{message}"
-
 permissions:
   officer:
     - INVITE

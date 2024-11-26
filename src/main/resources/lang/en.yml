@@ -35,6 +35,7 @@ clan:
   demoted: "&cYou have been demoted in your clan!"
   promote: "&aYou have promoted {player} in your clan!"
   promoted: "&aYou have been promoted in your clan!"
+  full: "&cThis clan is full, members limit: {limit}!"
 
 
 misc:
