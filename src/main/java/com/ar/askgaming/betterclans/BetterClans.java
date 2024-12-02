@@ -33,6 +33,10 @@ public class BetterClans extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EntityDamageByEntityListener(this), this);
         getServer().getPluginManager().registerEvents(new AsyncPlayerChatListener(this), this);
 
+        if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new PlayerHolders(this).register();
+        }
+
     }
     public void onDisable() {
         if (clansManager == null) {
