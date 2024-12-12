@@ -83,7 +83,7 @@ public class FilesManager {
             return result.toString().trim();
         }
 
-        return lang.getString(path,"Undefined");
+        return lang.getString(path,"Undefined "+path);
     }
     public void langBroadcast(String path) {
         for (Player p : plugin.getServer().getOnlinePlayers()) {
