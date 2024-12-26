@@ -105,4 +105,7 @@ public class UtilityMethods {
             p.sendMessage((i + 1) + ". " + clan);
         }
     }
+    public boolean isAlphaNumeric(String str) {
+        return str.matches("^[a-zA-Z0-9]*$");
+    }
 }
