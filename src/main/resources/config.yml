@@ -2,7 +2,8 @@
 
 #Dont enable tag and tab if you are using a plugin that changes the tablist
 #Preffix aply to tab and tag, suffix only to tag
-
+clan:
+  limit: 10
 chat_feature:
   enable: true
   global: '&7[&8{clan}&7]&r {player}&7: {message}'

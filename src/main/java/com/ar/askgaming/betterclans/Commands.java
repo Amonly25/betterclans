@@ -218,7 +218,7 @@ public class Commands implements TabExecutor{
             p.sendMessage(files.getLang("clan.no_online", p));
             return;
         }
-        int limit = plugin.getConfig().getInt("clan.limit");
+        int limit = plugin.getConfig().getInt("clan.limit",10);
         if (clan.getMembers().size() + clan.getRecruits().size() + clan.getOfficers().size() >= limit){
             p.sendMessage(files.getLang("clan.full", p).replace("{limit}", String.valueOf(limit)));
             return;
