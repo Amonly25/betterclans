@@ -122,6 +122,11 @@ public class Commands implements TabExecutor{
         }
         String name = args[1];
 
+        if (!plugin.getUtilityMethods().isAlphaNumeric(name)){
+            p.sendMessage(files.getLang("commands.invalid_name", p));
+            return;
+
+        }
         if (plugin.getUtilityMethods().hasValidLength(name, 6, 16)){
             clans.createClan(name, p);
         } else p.sendMessage(files.getLang("commands.character_limit", p).replace("{min}", "6").replace("{max}", "16"));
@@ -160,6 +165,10 @@ public class Commands implements TabExecutor{
         }
 
         String s = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+        if (!plugin.getUtilityMethods().isAlphaNumeric(s)){
+            p.sendMessage(files.getLang("commands.invalid_name", p));
+            return;
+        }
         String set = "";
         switch (args[1].toLowerCase()) {
             case "home":
@@ -167,6 +176,7 @@ public class Commands implements TabExecutor{
                 set = "home";
                 break;
             case "tag":
+
                 if (plugin.getUtilityMethods().hasValidLength(s, 3, 8)){
                     clan.setTag(s);
                     set = "tag";
@@ -250,9 +260,13 @@ public class Commands implements TabExecutor{
         }
         for (Map.Entry<String, Player> entry : clans.getInvited().entrySet()){
             if (entry.getValue().equals(p) && entry.getKey().equalsIgnoreCase(args[1])){
-                p.sendMessage(files.getLang("clan.join", p).replace("{clan}", entry.getKey()));
                 
-                Clan invited = clans.getClanByName(entry.getKey());
+                Clan invited = clans.getClanByName(args[1]);
+                if (invited == null){
+                    p.sendMessage(files.getLang("clan.no_exists", p));
+                    return;
+                }
+                p.sendMessage(files.getLang("clan.join", p).replace("{clan}", args[1]));
                 invited.getRecruits().add(p.getUniqueId());
                 invited.save();
                 return;

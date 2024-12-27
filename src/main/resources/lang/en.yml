@@ -2,6 +2,7 @@ commands:
   invalid_page: "&cInvalid page!"
   invalid_usage: "&cInvalid usage! Use /clan help for more information!"
   character_limit: "&cCharacter limit exceeded! Minimum: {min}, Maximum: {max}"
+  invalid_name: "&cInvalid name! Use only letters and numbers!"
 
 clan:
   no_clan: "&cYou are not in a clan!"
