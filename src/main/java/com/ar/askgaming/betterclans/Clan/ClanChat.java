@@ -12,6 +12,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.ar.askgaming.betterclans.BetterClans;
 
+import me.clip.placeholderapi.PlaceholderAPI;
+
 public class ClanChat {
 
     private BetterClans plugin;
@@ -35,20 +37,31 @@ public class ClanChat {
     public void broadcastGlobalMessage(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         Clan clan = plugin.getClansManager().getClanByPlayer(player);
-        if (!plugin.getConfig().getBoolean("chat_feature.enable")){
+        
+        if (!plugin.getConfig().getBoolean("chat_feature.enable")) {
             return;
         }
+        
         String format = plugin.getConfig().getString("chat_feature.global");
         String pName = player.getDisplayName();
-        String clanName = "";
-        if (clan != null) {
-            clanName = clan.getTag();
-        }
-        String colored = ChatColor.translateAlternateColorCodes('&', format);
-        format = colored.replace("{player}", pName).replace("{clan}", clanName).replace("{message}", event.getMessage());
-        event.setFormat(ChatColor.translateAlternateColorCodes('&', format));
-
+        String clanName = (clan != null) ? clan.getTag() : "";
+        
+        // Escapa el mensaje para evitar errores de formato
+        String escapedMessage = event.getMessage().replace("%", "%%");
+        
+        // Reemplaza los placeholders en el formato
+        format = format.replace("{player}", pName)
+                       .replace("{clan}", clanName)
+                       .replace("{message}", escapedMessage);
+        
+        // Aplica traducción de colores y placehoders
+        String coloredFormat = ChatColor.translateAlternateColorCodes('&', format);
+        coloredFormat = PlaceholderAPI.setPlaceholders(player, coloredFormat);
+        
+        // Usa setFormat con la cadena corregida
+        event.setFormat(coloredFormat);
     }
+    
     public void broadCastClanMessage(ChatType chatType, Player player, String message) {
         Clan clan = plugin.getClansManager().getClanByPlayer(player);
 
@@ -68,8 +81,8 @@ public class ClanChat {
         }
         // Send message to all online ops
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.isOp() && !players.contains(p)) {
-                players.add(p);
+            if (p.hasPermission("betterclans.admin")) {
+                p.sendMessage("§8Clan Chat Whisper: " +pName + ": " +message);
             }
         }
         // Send message to all players in the list

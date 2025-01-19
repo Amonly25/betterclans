@@ -30,7 +30,10 @@ public class Commands implements TabExecutor{
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        return List.of("create", "remove", "inventory", "set", "home", "invite", "join", "leave", "kick", "ally", "enemy", "war","shop","help");
+        if (args.length == 1){
+            return List.of("create", "remove", "inventory", "set", "home", "invite", "join", "leave", "kick", "ally", "enemy", "war","shop","help","info","list","chat");
+        } 
+        return null;
     }
 
     @Override
@@ -127,6 +130,11 @@ public class Commands implements TabExecutor{
             return;
 
         }
+        Clan clan = clans.getClanByName(name);
+        if (clan != null){
+            p.sendMessage(files.getLang("clan.already_exists", p));
+            return;
+        }
         if (plugin.getUtilityMethods().hasValidLength(name, 6, 16)){
             clans.createClan(name, p);
         } else p.sendMessage(files.getLang("commands.character_limit", p).replace("{min}", "6").replace("{max}", "16"));
@@ -143,10 +151,21 @@ public class Commands implements TabExecutor{
     }
     //#region inventory
     public void openInventoryClan(Player p, String[] args){
-        if (clans.hasClanPermission(p, Permission.INVENTORY)){
+
+        if (args.length == 2){
+            if (p.hasPermission("betterclans.admin")){
+                Clan clan = clans.getClanByName(args[1]);
+                if (clan != null){
+                    p.openInventory(clan.getInventory());
+                    return;
+                }
+            } else {
+                p.sendMessage(files.getLang("clan.no_permission", p));
+            }
+        } else if (clans.hasClanPermission(p, Permission.INVENTORY)){
             p.openInventory(clans.getClanByPlayer(p).getInventory());
             return;
-        } 
+        }
     }
     //#region set
     public void set(Player p, String[] args){
@@ -176,7 +195,11 @@ public class Commands implements TabExecutor{
                 set = "home";
                 break;
             case "tag":
-
+                Clan tag = clans.getClanByTag(s);
+                if (tag != null){
+                    p.sendMessage(files.getLang("clan.tag_exists", p));
+                    return;
+                }
                 if (plugin.getUtilityMethods().hasValidLength(s, 3, 8)){
                     clan.setTag(s);
                     set = "tag";
@@ -190,6 +213,11 @@ public class Commands implements TabExecutor{
                 } else p.sendMessage(files.getLang("commands.character_limit", p).replace("{min}", "8").replace("{max}", "32"));
                 break;  
             case "name":
+                Clan other = clans.getClanByName(s);
+                if (other != null){
+                    p.sendMessage(files.getLang("clan.already_exists", p));
+                    return;
+                }
                 if (plugin.getUtilityMethods().hasValidLength(s, 6, 16)){
                     clan.setName(s);
                     set = "name";
@@ -371,11 +399,21 @@ public class Commands implements TabExecutor{
             return;
         }
         Clan clan = clans.getClanByName(args[1]);
-        if (clan == null){
-            p.sendMessage(files.getLang("clan.no_exists", p));
+        if (clan != null){
+            clans.sendInfo(clan, p);
             return;
+        } else {
+            Player player = Bukkit.getPlayer(args[1]);
+            if (player != null){
+                clan = clans.getClanByPlayer(player);
+                if (clan != null){
+                    clans.sendInfo(clan, p);
+                    return;
+                }
+            }
         }
-        clans.sendInfo(clan, p);
+        
+        p.sendMessage(files.getLang("clan.no_exists", p));
     }
     //#endregion
     //#region ally

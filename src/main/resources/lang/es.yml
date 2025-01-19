@@ -9,6 +9,7 @@ clan:
   no_permission: "&c¡No tienes permiso para hacer eso!"
   already_in_clan: "&c¡Ya estás en un clan!"
   already_exists: "&c¡Este clan ya existe!"
+  tag_exists: "&c¡Esta etiqueta ya existe!"
   no_exists: "&c¡Este clan no existe!"
   set: "&aHas establecido el {set} de tu clan."
   no_home: "&c¡Tu clan no tiene una base!"

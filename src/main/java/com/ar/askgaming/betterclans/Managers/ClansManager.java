@@ -55,9 +55,10 @@ public class ClansManager {
 
 
     public boolean createClan(String name, Player owner){
-        if (clans.containsKey(name)){
-            owner.sendMessage(plugin.getFilesManager().getLang("clan.already_exists", owner));
-            return false;
+        for (String clanName : clans.keySet()) {
+            if (clanName.equalsIgnoreCase(name)){
+                return false;
+            }
         }
         new Clan(name, owner);
         return true;
@@ -91,7 +92,12 @@ public class ClansManager {
         return null;
     }
     public Clan getClanByName(String name){
-        return clans.get(name);
+        for (Clan clan : clans.values()) {
+            if (clan.getName().equalsIgnoreCase(name)){
+                return clan;
+            }
+        }
+        return null;
     }
     public HashMap<String, Player> getInvited() {
         return invited;
@@ -126,6 +132,14 @@ public class ClansManager {
         }
         return null;
     } 
+    public Clan getClanByTag(String tag){
+        for (Clan clan : clans.values()) {
+            if (clan.getTag().equalsIgnoreCase(tag)){
+                return clan;
+            }
+        }
+        return null;
+    }
 
     public void sendInfo(Clan clan, Player p) {
 
