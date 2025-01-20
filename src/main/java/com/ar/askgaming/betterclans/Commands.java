@@ -328,7 +328,7 @@ public class Commands implements TabExecutor{
             return;
         }
         Clan clan = clans.getClanByPlayer(p);
-        OfflinePlayer kicked = Bukkit.getPlayer(args[1]);
+        OfflinePlayer kicked = Bukkit.getOfflinePlayer(args[1]);
 
         if (clan.getOwner().equals(kicked.getUniqueId())){
             p.sendMessage(files.getLang("clan.no_permission", p));
@@ -351,7 +351,7 @@ public class Commands implements TabExecutor{
         }
 
         Clan clan = clans.getClanByOwner(p);
-        OfflinePlayer promoted = plugin.getServer().getPlayer(args[1]);
+        OfflinePlayer promoted = Bukkit.getOfflinePlayer(args[1]);
         if (!clans.isInClan(clan, promoted)){
             p.sendMessage(files.getLang("clan.no_in_clan", p));
             return;
@@ -371,7 +371,7 @@ public class Commands implements TabExecutor{
             return;
         }
         Clan clan = clans.getClanByOwner(p);
-        OfflinePlayer demoted = plugin.getServer().getPlayer(args[1]);
+        OfflinePlayer demoted = Bukkit.getOfflinePlayer(args[1]);
         if (!clans.isInClan(clan, demoted)){
             p.sendMessage(files.getLang("clan.no_in_clan", p));
             return;
