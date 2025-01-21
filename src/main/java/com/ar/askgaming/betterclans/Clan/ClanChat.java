@@ -48,18 +48,20 @@ public class ClanChat {
         
         // Escapa el mensaje para evitar errores de formato
         String escapedMessage = event.getMessage().replace("%", "%%");
+        if (player.hasPermission("betterclans.chat.color")) {
+            escapedMessage = ChatColor.translateAlternateColorCodes('&', escapedMessage);
+        }
         
         // Reemplaza los placeholders en el formato
         format = format.replace("{player}", pName)
-                       .replace("{clan}", clanName)
-                       .replace("{message}", escapedMessage);
+                       .replace("{clan}", clanName);
         
         // Aplica traducción de colores y placehoders
         String coloredFormat = ChatColor.translateAlternateColorCodes('&', format);
         coloredFormat = PlaceholderAPI.setPlaceholders(player, coloredFormat);
         
         // Usa setFormat con la cadena corregida
-        event.setFormat(coloredFormat);
+        event.setFormat(coloredFormat + "§f" + escapedMessage);
     }
     
     public void broadCastClanMessage(ChatType chatType, Player player, String message) {
