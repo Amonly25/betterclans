@@ -61,7 +61,7 @@ public class ClanChat {
         coloredFormat = PlaceholderAPI.setPlaceholders(player, coloredFormat);
         
         // Usa setFormat con la cadena corregida
-        event.setFormat(coloredFormat + "§f" + escapedMessage);
+        event.setFormat(coloredFormat + escapedMessage);
     }
     
     public void broadCastClanMessage(ChatType chatType, Player player, String message) {
