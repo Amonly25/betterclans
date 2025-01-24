@@ -67,6 +67,12 @@ public class ClanChat {
     public void broadCastClanMessage(ChatType chatType, Player player, String message) {
         Clan clan = plugin.getClansManager().getClanByPlayer(player);
 
+        if (clan == null) {
+            player.sendMessage(plugin.getFilesManager().getLang("clan.no_clan", player));
+            this.chatType.put(player, ChatType.GLOBAL);
+            return;
+        }
+
         String format = plugin.getConfig().getString("chat_feature."+chatType.toString().toLowerCase());
         format = ChatColor.translateAlternateColorCodes('&', format);
         String pName = player.getName();
