@@ -3,14 +3,11 @@ clan:
   limit: 5
   inventory_size: 27
   
-#
 chat_feature:
   enable: true #This only apply to global, clan and ally chat will be always enabled
   global: '&7[&8{clan}&7]&r {player}&7: '
   clan: "&aClan &7chat > &8{player}: &a{message}"
   ally:  "&bAlly &7chat > &8{player}: &b{message}"
-
-#Owner clan has all permissions
 
 #Owner clan has all permissions
 permissions:
