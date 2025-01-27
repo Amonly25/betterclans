@@ -15,7 +15,7 @@ public class UtilityMethods {
         this.plugin = plugin;
     }
 
-    public void teleport(Player p, Location l){
+    public void teleport(Player p, Location l, Boolean overrideMove){
 
         final int z = p.getLocation().getBlockZ(), x = p.getLocation().getBlockX();
         p.sendMessage(plugin.getFilesManager().getLang("misc.teleport_start", p));
@@ -29,12 +29,14 @@ public class UtilityMethods {
                     p.teleport(l);        		
                     cancel(); 
                     return;
-                }	    	    	                                    	    	                        
-                if (z != p.getLocation().getBlockZ() || x != p.getLocation().getBlockX()){
-                    p.sendMessage(plugin.getFilesManager().getLang("misc.teleport_cancel", p));
-                    cancel();
-                    return;
-                }
+                }	   
+                if (!overrideMove){
+                    if (z != p.getLocation().getBlockZ() || x != p.getLocation().getBlockX()){
+                        p.sendMessage(plugin.getFilesManager().getLang("misc.teleport_cancel", p));
+                        cancel();
+                        return;
+                    }
+                } 	    	                                    	    	                        
                 count--;  
             }
         }.runTaskTimer(plugin, 0L, 20L); 

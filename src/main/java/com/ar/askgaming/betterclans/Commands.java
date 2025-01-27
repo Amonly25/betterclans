@@ -1,6 +1,8 @@
 package com.ar.askgaming.betterclans;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import com.ar.askgaming.betterclans.Clan.Clan;
 import com.ar.askgaming.betterclans.Clan.ClanChat.ChatType;
+import com.ar.askgaming.betterclans.Clan.ClanShop;
 import com.ar.askgaming.betterclans.Managers.ClansManager;
 import com.ar.askgaming.betterclans.Managers.ClansManager.Permission;
 import com.ar.askgaming.betterclans.Managers.FilesManager;
@@ -31,7 +34,8 @@ public class Commands implements TabExecutor{
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1){
-            return List.of("create", "remove", "inventory", "set", "home", "invite", "join", "leave", "kick", "ally", "enemy", "war","shop","help","info","list","chat");
+            return List.of("create", "remove", "inventory", "set", "home", "invite","deposit","withdraw", 
+            "join", "leave", "kick", "ally", "enemy", "war","shop","help","info","list","chat","top");
         } 
         return null;
     }
@@ -39,7 +43,31 @@ public class Commands implements TabExecutor{
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)){
-            sender.sendMessage("You must be a player to use this command");
+            switch (args[0].toLowerCase()) {
+                case "teleport":
+                    if (args.length == 2){
+                        Clan clan = clans.getClanByName(args[1]);
+                        if (clan != null){
+                            if (clan.getHome() == null){
+                                sender.sendMessage("Clan has no home");
+                                return true;
+                            }
+                            for (Player player : plugin.getClansManager().getAllClanMembers(clan)){
+                                plugin.getUtilityMethods().teleport(player, clan.getHome(), true);
+                            }
+                        }
+                        return true;
+                    }
+                    break;
+                case "reload":
+                    plugin.reloadConfig();
+                    sender.sendMessage("Config reloaded");
+                    plugin.setClanShop(new ClanShop(plugin));
+                    break;
+                default:
+                    sender.sendMessage("That command is only for players or is not valid");
+                    break;
+            }
             return true;
         }
         Player p = (Player) sender;
@@ -106,6 +134,22 @@ public class Commands implements TabExecutor{
                 break;    
             case "chat":
                 chatClan(p, args);
+                break;
+            case "deposit":
+                deposit(p, args);
+                break;
+            case "withdraw":
+                withdraw(p, args);
+                break;
+            case "reload":
+                if (p.hasPermission("betterclans.admin")){
+                    plugin.reloadConfig();
+                    p.sendMessage("Config reloaded");
+                    plugin.setClanShop(new ClanShop(plugin));
+                }
+                break;
+            case "top":
+                top(p, args);
                 break;
             default:
                 help(p, args);
@@ -237,7 +281,7 @@ public class Commands implements TabExecutor{
                 p.sendMessage(files.getLang("clan.no_home", p));
                 return;
             }
-            plugin.getUtilityMethods().teleport(p, clan.getHome());
+            plugin.getUtilityMethods().teleport(p, clan.getHome(),false);
         } 
     }
     //#region invite
@@ -520,7 +564,7 @@ public class Commands implements TabExecutor{
     //#endregion
     //#region shop
     public void shop(Player p, String[] args){
-        p.sendMessage("En desarrollo");
+        p.openInventory(plugin.getClanShop().getInv());
     }
     //#endregion
     //#region help
@@ -564,5 +608,117 @@ public class Commands implements TabExecutor{
     
         plugin.getClanChat().setChatType(p, chatType);
         p.sendMessage(files.getLang("clan.chat", p).replace("{type}", message));
+    }
+    //#region deposit
+    public void deposit(Player p, String[] args){
+        if (args.length < 2){
+            p.sendMessage(files.getLang("commands.usage", p));
+            return;
+        }
+        Clan clan = clans.getClanByPlayer(p);
+        if (clan == null){
+            p.sendMessage(files.getLang("clan.no_clan", p));
+            return;
+        }
+        if (!clans.hasClanPermission(p, Permission.DEPOSIT)){
+            return;
+        }
+        int amount;
+        try {
+            amount = Integer.parseInt(args[1]);
+            if (amount <= 0) {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException e) {
+            p.sendMessage(files.getLang("commands.invalid_number", p));
+            return;
+        }
+        if (plugin.getVaultEconomy() != null){
+            if (plugin.getVaultEconomy().getBalance(p) < amount){
+                p.sendMessage(files.getLang("economy.not_enough", p));
+                return;
+            }
+            plugin.getVaultEconomy().withdrawPlayer(p, amount);
+        }
+
+        clan.setBalance(clan.getBalance() + amount);
+        clan.save();
+        p.sendMessage(files.getLang("economy.deposit", p).replace("{amount}", String.valueOf(amount)));
+    }
+    //#region withdraw
+    public void withdraw(Player p, String[] args){
+        if (args.length < 2){
+            p.sendMessage(files.getLang("commands.usage", p));
+            return;
+        }
+        Clan clan = clans.getClanByPlayer(p);
+        if (clan == null){
+            p.sendMessage(files.getLang("clan.no_clan", p));
+            return;
+        }
+        if (!clans.hasClanPermission(p, Permission.WITHDRAW)){
+            return;
+        }
+        int amount;
+        try {
+            amount = Integer.parseInt(args[1]);
+            if (amount <= 0) {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException e) {
+            p.sendMessage(files.getLang("commands.invalid_number", p));
+            return;
+        }
+        if (clan.getBalance() < amount){
+            p.sendMessage(files.getLang("economy.not_enough_clan", p));
+            return;
+        }
+        if (plugin.getVaultEconomy() != null){
+            plugin.getVaultEconomy().depositPlayer(p, amount);
+        }
+        clan.setBalance(clan.getBalance() - amount);
+        clan.save();
+        p.sendMessage(files.getLang("economy.withdraw", p).replace("{amount}", String.valueOf(amount)));
+    }
+    //#region top
+    public void top(Player p, String[] args){
+
+        HashMap<String, Integer> sorted = new HashMap<>();
+        plugin.getClansManager().getClans().forEach((name, clan) -> {
+            sorted.put(name, clan.getPoints());
+        });
+
+        List<String> allClans = new ArrayList<>();
+
+        sorted.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).forEach(entry -> {
+            allClans.add(entry.getKey() + " - " + entry.getValue());
+        });
+
+        plugin.getUtilityMethods().listToPage(allClans, args, p);
+    }
+    //#region rankup
+    public void rankup(Player p, String[] args){
+
+        Clan clan = clans.getClanByPlayer(p);
+        if (clan == null){
+            p.sendMessage(files.getLang("clan.no_clan", p));
+            return;
+        }
+        if (!clans.hasClanPermission(p, Permission.RANKUP)){
+            return;
+        }
+        if (clan.getRank() >= 3){
+            p.sendMessage(files.getLang("clan.max_rank", p));
+            return;
+        }
+        int cost = plugin.getConfig().getInt("clan.rankup_cost", 1000);
+        if (clan.getBalance() < cost){
+            p.sendMessage(files.getLang("economy.not_enough_clan", p));
+            return;
+        }
+        clan.setBalance(clan.getBalance() - cost);
+        clan.setRank(clan.getRank() + 1);
+        clan.save();
+        p.sendMessage(files.getLang("clan.rankup", p).replace("{cost}", String.valueOf(cost)));
     }
 }

@@ -20,6 +20,7 @@
         <name>GitHub Amonly25 Apache Maven Packages</name>
         <url>https://maven.pkg.github.com/Amonly25/betterclans</url>
         </repository>
+
     </distributionManagement>
 
     <repositories>
@@ -32,6 +33,11 @@
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
 
     </repositories>
@@ -51,6 +57,13 @@
             <version>2.11.6</version>
             <scope>provided</scope>
         </dependency> 
+
+        <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7.1</version>
+            <scope>provided</scope>
+         </dependency>
 
     </dependencies>
 

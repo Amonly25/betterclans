@@ -1,14 +1,16 @@
-#Owner clan has all permissions
 
-#Dont enable tag and tab if you are using a plugin that changes the tablist
-#Preffix aply to tab and tag, suffix only to tag
 clan:
-  limit: 10
+  limit: 5
+  inventory_size: 27
+  
+#
 chat_feature:
   enable: true
   global: '&7[&8{clan}&7]&r {player}&7: '
   clan: "&aClan &7chat > &8{player}: &a{message}"
   ally:  "&bAlly &7chat > &8{player}: &b{message}"
+
+#Owner clan has all permissions
 permissions:
   officer:
     - INVITE
@@ -23,9 +25,74 @@ permissions:
     - WAR
     - ENEMY
     - ALLY
+    - RANKUP
   member:
     - HOME
     - INVENTORY
     - DEPOSIT
   recruit:
     - NONE
+  
+shop:
+  items:
+    1:
+      name: "Miraculous help"
+      lore:
+      - "&7Price: &a300"
+      - "&7Teleport all clan members to the clan home"
+      - "&7Moving doesnt cancel it"
+      cost: 300
+      slot: 4
+      material: OAK_DOOR
+      commands:
+      - "clan teleport {clan}"
+    2:
+      name: "&aSpeed boost"
+      lore:
+      - "&7Price: &a150"
+      - "&7Give 300 seconds of speed 1"
+      cost: 150
+      slot: 9
+      material: SUGAR
+      commands:
+      - "effect give {all_clan} minecraft:speed 300 0"
+    3:
+      name: "&aFire protection"
+      lore:
+      - "&7Price: &a150"
+      - "&7Give 300 seconds of fire resistance 1"
+      cost: 150
+      slot: 11
+      material: MAGMA_CREAM
+      commands:
+      - "effect give {all_clan} minecraft:fire_resistance 300 0"
+    4:
+      name: "&aRenegration"
+      lore:
+      - "&7Price: &a150"
+      - "&7Give 45 seconds of regeneration 1"
+      cost: 150
+      slot: 13
+      material: GHAST_TEAR
+      commands:
+      - "effect give {all_clan} minecraft:regeneration 45 0"
+    5:
+      name: "&aStrength"
+      lore:
+      - "&7Price: &a150"
+      - "&7Give 300 seconds of strength 1"
+      cost: 150
+      slot: 15
+      material: BLAZE_POWDER
+      commands:
+      - "effect give {all_clan} minecraft:strength 300 0"
+    6:
+      name: "&aJump boost"
+      lore:
+      - "&7Price: &a150"
+      - "&7Give 90 seconds of slow falling"
+      cost: 150
+      slot: 17
+      material: PHANTOM_MEMBRANE
+      commands:
+      - "effect give {all_clan} minecraft:slow_falling 90 0"

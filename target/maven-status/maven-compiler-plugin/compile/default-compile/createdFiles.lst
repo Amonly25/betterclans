@@ -1,6 +1,7 @@
 com\ar\askgaming\betterclans\UtilityMethods$1.class
 com\ar\askgaming\betterclans\Clan\ClanChat.class
 com\ar\askgaming\betterclans\Managers\FilesManager.class
+com\ar\askgaming\betterclans\Listeners\InventoryClickListener.class
 com\ar\askgaming\betterclans\Listeners\AsyncPlayerChatListener$1.class
 com\ar\askgaming\betterclans\Listeners\AsyncPlayerChatListener.class
 com\ar\askgaming\betterclans\Managers\ClansManager$Permission.class
@@ -10,6 +11,7 @@ com\ar\askgaming\betterclans\Commands.class
 com\ar\askgaming\betterclans\Clan\Clan.class
 com\ar\askgaming\betterclans\Clan\ClanShop.class
 com\ar\askgaming\betterclans\Clan\ClanChat$ChatType.class
+com\ar\askgaming\betterclans\Listeners\PlayerDeathListener.class
 com\ar\askgaming\betterclans\Listeners\InventoryCloseListener.class
 com\ar\askgaming\betterclans\Managers\ClansManager.class
 com\ar\askgaming\betterclans\Listeners\EntityDamageByEntityListener.class

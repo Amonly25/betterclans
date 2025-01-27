@@ -175,7 +175,7 @@ public class ClansManager {
         return false;
     }
     public enum Permission {
-        INVITE, KICK, SET, HOME, ALLY, ENEMY, REMOVE, PROMOTE, DEMOTE, INVENTORY, DEPOSIT, WITHDRAW, BUY, WAR
+        INVITE, KICK, SET, HOME, ALLY, ENEMY, REMOVE, PROMOTE, DEMOTE, INVENTORY, DEPOSIT, WITHDRAW, BUY, WAR, RANKUP
     }
     public boolean hasClanPermission(Player p, Permission permission){
         Clan clan = getClanByPlayer(p);
