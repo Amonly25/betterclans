@@ -1,8 +1,27 @@
 
-clan:
-  limit: 5
-  inventory_size: 27
-  
+rankup:
+  1:
+    limit: 5
+    inventory_size: 27
+    cost: 500
+  2:
+    limit: 7
+    inventory_size: 36
+    cost: 1000
+  3:
+    limit: 10
+    inventory_size: 45
+    cost: 1500
+  4:
+    limit: 15
+    inventory_size: 54
+    cost: 2000
+  5:
+    limit: 20
+    # dont remove the inventory size key
+    inventory_size: 54
+    cost: 3000
+
 chat_feature:
   enable: true #This only apply to global, clan and ally chat will be always enabled
   global: '&7[&8{clan}&7]&r {player}&7: '

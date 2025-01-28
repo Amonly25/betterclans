@@ -12,6 +12,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.ar.askgaming.betterclans.Clan.Clan;
 import com.ar.askgaming.betterclans.Clan.ClanChat.ChatType;
@@ -150,6 +151,9 @@ public class Commands implements TabExecutor{
                 break;
             case "top":
                 top(p, args);
+                break;
+            case "rankup":
+                rankup(p, args);
                 break;
             default:
                 help(p, args);
@@ -300,7 +304,8 @@ public class Commands implements TabExecutor{
             p.sendMessage(files.getLang("clan.no_online", p));
             return;
         }
-        int limit = plugin.getConfig().getInt("clan.limit",10);
+        int level = clan.getLevel();
+        int limit = plugin.getConfig().getInt("rankup."+String.valueOf(level)+".limit",5);
         if (clan.getMembers().size() + clan.getRecruits().size() + clan.getOfficers().size() >= limit){
             p.sendMessage(files.getLang("clan.full", p).replace("{limit}", String.valueOf(limit)));
             return;
@@ -699,6 +704,11 @@ public class Commands implements TabExecutor{
     //#region rankup
     public void rankup(Player p, String[] args){
 
+        if (args.length > 1){
+            p.sendMessage(plugin.getFilesManager().getLang("rankup", p));
+            return;
+        }
+
         Clan clan = clans.getClanByPlayer(p);
         if (clan == null){
             p.sendMessage(files.getLang("clan.no_clan", p));
@@ -707,18 +717,28 @@ public class Commands implements TabExecutor{
         if (!clans.hasClanPermission(p, Permission.RANKUP)){
             return;
         }
-        if (clan.getRank() >= 3){
-            p.sendMessage(files.getLang("clan.max_rank", p));
+        int level = clan.getLevel();
+        if (level >= 5){
+            p.sendMessage(files.getLang("clan.max_level", p));
             return;
         }
-        int cost = plugin.getConfig().getInt("clan.rankup_cost", 1000);
+        int cost = plugin.getConfig().getInt("rankup." + String.valueOf(level+1)+".cost", 500);
         if (clan.getBalance() < cost){
-            p.sendMessage(files.getLang("economy.not_enough_clan", p));
+            p.sendMessage(files.getLang("economy.not_enough_clan", p).replace("{amount}", cost + ""));
             return;
         }
         clan.setBalance(clan.getBalance() - cost);
-        clan.setRank(clan.getRank() + 1);
+        clan.setLevel(clan.getLevel() + 1);
+        List<ItemStack> items = new ArrayList<>();
+        ItemStack[] contents = clan.getInventory().getContents().clone();
+        for (ItemStack item : contents){
+            if (item != null){
+                items.add(item);
+            }
+        }
+        clan.getInventory().clear();
+        clan.loadInventory(items);
         clan.save();
-        p.sendMessage(files.getLang("clan.rankup", p).replace("{cost}", String.valueOf(cost)));
+        p.sendMessage(files.getLang("clan.rankup", p));
     }
 }

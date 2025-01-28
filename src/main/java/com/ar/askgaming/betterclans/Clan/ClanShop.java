@@ -95,7 +95,7 @@ public class ClanShop {
 
             Integer cost = plugin.getConfig().getInt("shop.items." + key + ".cost",100);
             if (balance < cost) {
-                player.sendMessage(plugin.getFilesManager().getLang("economy.not_enough_clan", player));
+                player.sendMessage(plugin.getFilesManager().getLang("economy.not_enough_clan", player).replace("{amount}", cost.toString()));
                 return;
             }
             String name = plugin.getConfig().getString("shop.items." + key + ".name", "Unknown");

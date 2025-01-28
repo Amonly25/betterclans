@@ -74,7 +74,7 @@ public class Clan implements ConfigurationSerializable{
         members = new ArrayList<>();
         officers = new ArrayList<>();
         recruits = new ArrayList<>();
-        loadInventory(null, 27);
+        loadInventory(null);
         
         clanConfig.set(name, this);
         save();
@@ -98,8 +98,8 @@ public class Clan implements ConfigurationSerializable{
         allies = u.loadStringList(map.get("allies"));
         enemies = u.loadStringList(map.get("enemies"));
         
-        List<ItemStack> items = (List<ItemStack>) map.get("inventory_content");
-        loadInventory(items, (int) map.get("inventory_size"));
+        items = (List<ItemStack>) map.get("inventory_content");
+        loadInventory(items);
 
     }
     @Override
@@ -114,7 +114,6 @@ public class Clan implements ConfigurationSerializable{
         map.put("officers", officers.toString());
         map.put("recruits", recruits.toString());
         map.put("inventory_content", inventory.getContents());
-        map.put("inventory_size", inventory.getSize());
         map.put("level", level);
         map.put("home", home);
         map.put("balance", balance);
@@ -125,11 +124,17 @@ public class Clan implements ConfigurationSerializable{
         
     }
 
-    public void loadInventory(List<ItemStack> items,int size){
-        inventory = plugin.getServer().createInventory(null, size, name);
+    public void loadInventory(List<ItemStack> items){
+        int size = plugin.getConfig().getInt("rankup."+ getLevel() + ".inventory_size",27);
+        try {
+            inventory = plugin.getServer().createInventory(null, size, name);
+        } catch (Exception e) {
+            inventory = plugin.getServer().createInventory(null, 27, name);
+            plugin.getLogger().warning("Failed to load inventory size for level " + getLevel());
+        }
         if (items != null) {
             ItemStack[] i = items.toArray(new ItemStack[0]); // Convertir a arreglo
-            inventory.setContents(i)   ; 
+            inventory.setContents(i); 
         }
     }
 
@@ -211,6 +216,11 @@ public class Clan implements ConfigurationSerializable{
     private double balance;
     private List<String> allies;
     private List<String> enemies;
+    private List<ItemStack> items;
+
+    public List<ItemStack> getItems() {
+        return items;
+    }
 
     public String getName() {
         return name;

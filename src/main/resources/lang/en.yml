@@ -39,14 +39,22 @@ clan:
   promote: "&aYou have promoted {player} in your clan!"
   promoted: "&aYou have been promoted in your clan!"
   full: "&cThis clan is full, members limit: {limit}!"
+  rankup: "&aYou have ranked up your clan!"
+  max_level: "&cYour clan is already at the maximum level!"
 
 economy:
   not_enough: "&cYou don't have enough money!"
   deposit: "&aYou have deposited {amount} to your clan bank!"
   withdraw: "&aYou have withdrawn {amount} from your clan bank!"
-  not_enough_clan: "&cYour clan doesn't have enough money!"
+  not_enough_clan: "&cYour clan doesn't have enough money, needed: {amount}!"
   bought: "&a{player} has bought {name} from the clan shop!"
 
+rankup:
+  - "&aRank 1: 5 members, 27 inventory size."
+  - "&aRank 2: 7 members, 36 inventory size, cost: 1000"
+  - "&aRank 3: 10 members, 45 inventory size, cost: 1500"
+  - "&aRank 4: 15 members, 54 inventory size, cost: 2000"
+  - "&aRank 5: 20 members, cost: 3000"
 
 misc:
   create_broadcast: "&a{player} created the clan {clan}!"
