@@ -1,4 +1,6 @@
-
+disabled_worlds: #List of worlds where the ally check will be disabled
+  - duels
+  
 rankup:
   1:
     limit: 5

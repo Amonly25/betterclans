@@ -1,6 +1,7 @@
 package com.ar.askgaming.betterclans.Listeners;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,6 +26,14 @@ public class EntityDamageByEntityListener implements Listener {
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
             Player damager = (Player) event.getDamager();
             Player damaged = (Player) event.getEntity();
+
+            List<String> disabledWorlds = plugin.getConfig().getStringList("disabled_worlds");
+            for (String world : disabledWorlds) {
+                if (damager.getWorld().getName().equalsIgnoreCase(world)) {
+                    return;
+                }
+            }
+
 
             if (plugin.getClansManager().isAlly(damager, damaged)) {
                 event.setCancelled(true);
