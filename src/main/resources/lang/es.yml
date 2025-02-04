@@ -43,11 +43,12 @@ clan:
   max_level: "&c¡Tu clan ya está en el nivel máximo!"
 
 economy:
-  not_enough: "&c¡No tienes suficiente dinero!"
+  not_enough: "&c¡No tienes suficiente dinero, necesario: {amount}!"
   deposit: "&a¡Has depositado {amount} en el banco de tu clan!"
   withdraw: "&a¡Has retirado {amount} del banco de tu clan!"
   not_enough_clan: "&c¡Tu clan no tiene suficiente dinero, necesario: {amount}!"
   bought: "&a{player} ha comprado {name} en la tienda del clan."
+  clan_cost: "&c¡{cost} fue cobrado al crear el clan!"
 
 rankup:
   - "&aRango 1: 5 miembros, tamaño de inventario 27."
@@ -67,8 +68,6 @@ misc:
   cant_promote_demote: "&c¡No puedes ascender o degradar a ese jugador!"
   cant_self: "&c¡No puedes establecer un enemigo o aliado con tu propio clan!"
   cant_ally_enemy: "&c¡No puedes establecer un enemigo a tu aliado!"
-
-info:
 
 help:
   - "&a/clan create <name> &7- Crear un clan"

@@ -83,7 +83,7 @@ public class Commands implements TabExecutor{
                 createClan(p, args);
                 break;
             case "remove":
-                removeClan(p, args);
+                deleteClan(p, args);
                 break;
             case "inventory":
                 openInventoryClan(p, args);
@@ -183,15 +183,28 @@ public class Commands implements TabExecutor{
             p.sendMessage(files.getLang("clan.already_exists", p));
             return;
         }
+
         if (plugin.getUtilityMethods().hasValidLength(name, 6, 16)){
+
             clans.createClan(name, p);
+            double cost = plugin.getConfig().getDouble("cost_creation", 50);
+
+            if (plugin.getVaultEconomy() != null){
+                if (plugin.getVaultEconomy().getBalance(p) < cost){
+                    p.sendMessage(files.getLang("economy.not_enough", p).replace("{amount}", String.valueOf(cost)));
+                    return;
+                }
+                plugin.getVaultEconomy().withdrawPlayer(p, cost);
+                p.sendMessage(files.getLang("economy.clan_cost", p).replace("{cost}", String.valueOf(cost)));
+            }
+
         } else p.sendMessage(files.getLang("commands.character_limit", p).replace("{min}", "6").replace("{max}", "16"));
         
     }
-    //#region remove
-    public void removeClan(Player p, String[] args){
+    //#region delete
+    public void deleteClan(Player p, String[] args){
         Clan clan = clans.getClanByPlayer(p);
-        if (clans.removeClan(clan)){
+        if (clans.deleteClan(clan)){
             Bukkit.getOnlinePlayers().forEach(player -> {
                 player.sendMessage(files.getLang("misc.delete_broadcast", p).replace("{clan}", clan.getName()));
             });
@@ -640,7 +653,7 @@ public class Commands implements TabExecutor{
         }
         if (plugin.getVaultEconomy() != null){
             if (plugin.getVaultEconomy().getBalance(p) < amount){
-                p.sendMessage(files.getLang("economy.not_enough", p));
+                p.sendMessage(files.getLang("economy.not_enough", p).replace("{amount}", String.valueOf(amount)));
                 return;
             }
             plugin.getVaultEconomy().withdrawPlayer(p, amount);
@@ -675,7 +688,7 @@ public class Commands implements TabExecutor{
             return;
         }
         if (clan.getBalance() < amount){
-            p.sendMessage(files.getLang("economy.not_enough_clan", p));
+            p.sendMessage(files.getLang("economy.not_enough_clan", p).replace("{amount}", amount + ""));
             return;
         }
         if (plugin.getVaultEconomy() != null){

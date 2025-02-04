@@ -77,16 +77,13 @@ public class ClanChat {
         format = ChatColor.translateAlternateColorCodes('&', format);
         String pName = player.getName();
 
-        List<Player> players = new ArrayList<>();
-        switch (chatType) {
-            case ALLY:
-                players = plugin.getClansManager().getAllAlliedClanMembers(clan);
-                break;
-        
-            default:
-                players = plugin.getClansManager().getAllClanMembers(clan);
-                break;
+        List<Player> players = plugin.getClansManager().getAllClanMembers(clan);
+
+        if (chatType == ChatType.ALLY) {
+            plugin.getClansManager().getAllAlliedClanMembers(clan).forEach(p -> players.add(p));
+
         }
+
         // Send message to all online ops
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.hasPermission("betterclans.admin")) {

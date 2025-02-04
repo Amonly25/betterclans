@@ -48,6 +48,7 @@ economy:
   withdraw: "&aYou have withdrawn {amount} from your clan bank!"
   not_enough_clan: "&cYour clan doesn't have enough money, needed: {amount}!"
   bought: "&a{player} has bought {name} from the clan shop!"
+  clan_cost: "&c{cost} was taken from creating the clan!"
 
 rankup:
   - "&aRank 1: 5 members, 27 inventory size."
@@ -68,7 +69,6 @@ misc:
   cant_self: "&cYou can't set an enemy or ally with your own clan!"
   cant_ally_enemy: "&cYou can't set an enemy to your ally!"
 
-info:
 
 help:
   - "&a/clan create <name> &7- Create a clan"

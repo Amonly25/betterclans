@@ -1,6 +1,11 @@
+cost_creation: 100 #Requires Vault and an economy plugin
+
 disabled_worlds: #List of worlds where the ally check will be disabled
   - duels
   
+points:
+  protection_time: 15 #Time to protect gained points from repeated deaths in minutes
+
 rankup:
   1:
     limit: 5

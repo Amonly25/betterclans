@@ -63,7 +63,7 @@ public class ClansManager {
         new Clan(name, owner);
         return true;
     }
-    public boolean removeClan(Clan clan){
+    public boolean deleteClan(Clan clan){
         try {
             clan.getClanFile().delete();
             clans.remove(clan.getName());
