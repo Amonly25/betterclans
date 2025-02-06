@@ -465,13 +465,11 @@ public class Commands implements TabExecutor{
             clans.sendInfo(clan, p);
             return;
         } else {
-            Player player = Bukkit.getPlayer(args[1]);
-            if (player != null){
-                clan = clans.getClanByPlayer(player);
-                if (clan != null){
-                    clans.sendInfo(clan, p);
-                    return;
-                }
+            OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
+            Clan playerClan = clans.getClanByOfflinePlayer(player);
+            if (playerClan != null){
+                clans.sendInfo(playerClan, p);
+                return;
             }
         }
         

@@ -91,6 +91,16 @@ public class ClansManager {
         }
         return null;
     }
+    public Clan getClanByOfflinePlayer(OfflinePlayer p){
+        UUID playerId = p.getUniqueId();
+        for (Clan clan : clans.values()) {
+            if (clan.getOwner().equals(playerId) || clan.getMembers().contains(playerId) ||
+                clan.getOfficers().contains(playerId) || clan.getRecruits().contains(playerId)) {
+                return clan;
+            }
+        }
+        return null;
+    }
     public Clan getClanByName(String name){
         for (Clan clan : clans.values()) {
             if (clan.getName().equalsIgnoreCase(name)){
