@@ -12,6 +12,7 @@ import com.ar.askgaming.betterclans.Listeners.EntityDamageByEntityListener;
 import com.ar.askgaming.betterclans.Listeners.InventoryClickListener;
 import com.ar.askgaming.betterclans.Listeners.InventoryCloseListener;
 import com.ar.askgaming.betterclans.Listeners.PlayerDeathListener;
+import com.ar.askgaming.betterclans.Listeners.PlayerMoveListener;
 import com.ar.askgaming.betterclans.Managers.ClansManager;
 import com.ar.askgaming.betterclans.Managers.FilesManager;
 
@@ -42,6 +43,7 @@ public class BetterClans extends JavaPlugin {
 
         new InventoryClickListener(this);
         new PlayerDeathListener(this);
+        new PlayerMoveListener(this);
 
         if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new PlayerHolders(this).register();

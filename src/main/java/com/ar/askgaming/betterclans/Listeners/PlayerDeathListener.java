@@ -2,7 +2,6 @@ package com.ar.askgaming.betterclans.Listeners;
 
 import java.util.HashMap;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

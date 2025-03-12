@@ -379,6 +379,7 @@ public class Commands implements TabExecutor{
         p.sendMessage(files.getLang("clan.leave", p));
     }
     //#region kick
+    @SuppressWarnings("deprecation")
     public void kickPlayer(Player p, String[] args){
 
         if (!clans.hasClanPermission(p, Permission.KICK)){
@@ -407,6 +408,7 @@ public class Commands implements TabExecutor{
         }
     }
     //#region promote
+    @SuppressWarnings("deprecation")
     public void promotePlayer(Player p, String[] args){
         if (!clans.hasClanPermission(p, Permission.PROMOTE)){
             return;
@@ -428,6 +430,7 @@ public class Commands implements TabExecutor{
     }
     //#endregion
     //#region demote
+    @SuppressWarnings("deprecation")
     public void demotePlayer(Player p, String[] args){
         if (!clans.hasClanPermission(p, Permission.DEMOTE)){
             return;
@@ -449,6 +452,7 @@ public class Commands implements TabExecutor{
     }
     //#endregion
     //#region info
+    @SuppressWarnings("deprecation")
     public void infoClan(Player p, String[] args){
 
         if (args.length < 2){
@@ -568,14 +572,50 @@ public class Commands implements TabExecutor{
             p.sendMessage(files.getLang("clan.enemy_removed", p).replace("{clan}", enemy.getName()));
             return;
         }
+
+        if (enemy.getEnemies().contains(clan.getName())){
+            clans.startWar(clan, enemy);
+        }
         clan.addEnemy(enemy);
         p.sendMessage(files.getLang("clan.enemy", p).replace("{clan}", enemy.getName()));
     }
     //#endregion
     //#region war
     public void warClan(Player p, String[] args){
-        p.sendMessage("En desarrollo");
-
+       
+        if (!clans.hasClanPermission(p, Permission.WAR)){
+            return;
+        }
+        if (args.length < 2){
+            p.sendMessage(files.getLang("commands.invalid_usage", p));
+            return;
+        }
+        Clan enemy = clans.getClanByName(args[1]);
+        if (enemy == null){
+            p.sendMessage(files.getLang("clan.no_exists", p));
+            return;
+        }
+        Clan clan = clans.getClanByPlayer(p);
+        if (clan.getAllies().contains(enemy.getName())){
+            p.sendMessage(files.getLang("clan.cant_ally_enemy", p));
+            return;
+        }
+        if (enemy.equals(clan)){
+            p.sendMessage(files.getLang("clan.cant_self", p));
+            return;
+        }
+        if (!clan.getEnemies().contains(enemy.getName())){
+            p.sendMessage(files.getLang("clan.not_enemy", p));
+            return;
+        }
+        if (clans.isInWarWith(clan, enemy)){
+            p.sendMessage(files.getLang("war.already_in", p));
+            return;
+        }
+        if (enemy.getEnemies().contains(clan.getName())){
+            clans.startWar(clan, enemy);
+            return;
+        }
     }
     //#endregion
     //#region shop
@@ -715,6 +755,7 @@ public class Commands implements TabExecutor{
     //#region rankup
     public void rankup(Player p, String[] args){
 
+
         if (args.length > 1){
             p.sendMessage(plugin.getFilesManager().getLang("rankup", p));
             return;
@@ -752,4 +793,5 @@ public class Commands implements TabExecutor{
         clan.save();
         p.sendMessage(files.getLang("clan.rankup", p));
     }
+
 }

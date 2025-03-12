@@ -5,23 +5,28 @@ import java.util.List;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import com.ar.askgaming.betterclans.BetterClans;
+import com.ar.askgaming.betterclans.Clan.Clan;
+import com.ar.askgaming.betterclans.Managers.ClansManager;
 
 public class EntityDamageByEntityListener implements Listener {
 
     private BetterClans plugin;
+    private ClansManager clansManager;
 
     public EntityDamageByEntityListener(BetterClans plugin) {
         this.plugin = plugin;
+        this.clansManager = plugin.getClansManager();
     }
 
     private HashMap<Player, Long> lastHit = new HashMap<>();
     private long cooldownTime = 50000; // 50 segundos de cooldown
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
             Player damager = (Player) event.getDamager();
@@ -34,8 +39,17 @@ public class EntityDamageByEntityListener implements Listener {
                 }
             }
 
+            Clan damagerClan = clansManager.getClanByPlayer(damager);
+            Clan damagedClan = clansManager.getClanByPlayer(damaged);
+            if (damagerClan == null || damagedClan == null) {
+                return;
+            }
+            if (clansManager.isInWarWith(damagerClan, damagedClan)) {
+                event.setCancelled(false);
+                return;
+            }
 
-            if (plugin.getClansManager().isAlly(damager, damaged)) {
+            if (clansManager.isAlly(damager, damaged)) {
                 event.setCancelled(true);
 
                // Añadir un mensaje de cooldown

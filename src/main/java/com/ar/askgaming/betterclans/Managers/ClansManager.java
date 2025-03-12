@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player;
 import com.ar.askgaming.betterclans.BetterClans;
 import com.ar.askgaming.betterclans.UtilityMethods;
 import com.ar.askgaming.betterclans.Clan.Clan;
+import com.ar.askgaming.betterclans.Clan.ClanWar;
 
 public class ClansManager {
 
@@ -250,5 +252,51 @@ public class ClansManager {
         for (UUID id : playerIds) {
             addOnlinePlayer(players, id);
         }
+    }
+    //#region war
+    private List<ClanWar> wars = new ArrayList<>();
+
+    public List<ClanWar> getWars() {
+        return wars;
+    }
+    public boolean isInWarWith(Clan clan1, Clan clan2){
+        for (ClanWar war : wars) {
+            if (war.getClan1().equals(clan1) && war.getClan2().equals(clan2)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public ClanWar getWar(Clan clan1, Clan clan2){
+        for (ClanWar war : wars) {
+            if (war.getClan1().equals(clan1) && war.getClan2().equals(clan2)){
+                return war;
+            }
+        }
+        return null;
+    }
+
+    public void startWar(Clan clan1, Clan clan2){
+        if (isInWarWith(clan1, clan2)){
+            return;
+        }
+        ClanWar war = new ClanWar(clan1, clan2);
+        wars.add(war);
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.sendMessage(plugin.getFilesManager().getLang("war.start", p).replace("{clan1}", clan2.getName()).replace("{clan2}", clan2.getName()));
+        }
+    }
+    public List<Clan> getWarsWith(Clan clan){
+        List<Clan> warsWith = new ArrayList<>();
+        for (ClanWar war : wars) {
+            if (war.getClan1().equals(clan)){
+                warsWith.add(war.getClan2());
+            }
+            if (war.getClan2().equals(clan)){
+                warsWith.add(war.getClan1());
+            }
+        }
+        return warsWith;
     }
 }

@@ -1,6 +1,5 @@
 package com.ar.askgaming.betterclans.Clan;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;

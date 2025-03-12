@@ -32,7 +32,7 @@ clan:
   ally_request: "&aThe clan {clan} has requested an alliance with you! Use /clan ally {clan} to accept!"
   enemy: "&aYou made the clan {clan} your enemy!"
   enemy_remove: "&cYou have removed the enemy with the clan {clan}!"
-  war: "&aYou have declared war on the clan {clan}!"
+  not_enemy: "&cThis clan is not your enemy!"
   chat: "&aYou have changued to the {type} chat!"
   demote: "&aYou have demoted {player} in your clan!"
   demoted: "&cYou have been demoted in your clan!"
@@ -41,6 +41,12 @@ clan:
   full: "&cThis clan is full, members limit: {limit}!"
   rankup: "&aYou have ranked up your clan!"
   max_level: "&cYour clan is already at the maximum level!"
+
+war:
+  start: "&e!! &7New war between &3{clan1} &7and &c{clan2} &7has started!"
+  end: "&eThe war between {clan1} and {clan2} has ended!"
+  already_in: "&cYou are already in a war with this clan!"
+  near: "&cYou are near {player} from and enemy clan!"
 
 economy:
   not_enough: "&cYou don't have enough money!"
