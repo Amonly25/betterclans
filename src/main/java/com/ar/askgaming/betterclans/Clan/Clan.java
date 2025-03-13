@@ -27,22 +27,17 @@ public class Clan implements ConfigurationSerializable{
     private File clanFile;
     private FileConfiguration clanConfig;
 
-    public File getClanFile() {
-        return clanFile;
-    }
+    private String name, tag, description;
+    private UUID owner;
+    private List<UUID> members, officers, recruits;
+    private Inventory inventory;
+    private int points, level;
+    private Location home;
+    private double balance;
+    private List<String> allies, enemies;
+    private List<ItemStack> items;
 
-    public void setClanFile(File clanFile) {
-        this.clanFile = clanFile;
-    }
-
-    public FileConfiguration getClanConfig() {
-        return clanConfig;
-    }
-
-    public void setClanConfig(FileConfiguration clanConfig) {
-        this.clanConfig = clanConfig;
-    }
-
+    //#region Constructors
     public Clan(String name, Player owner){
         
         clanFile = new File(plugin.getDataFolder() + "/clans/"+name+".yml");
@@ -102,6 +97,7 @@ public class Clan implements ConfigurationSerializable{
         loadInventory(items);
 
     }
+    //#region Serialization
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
@@ -122,6 +118,14 @@ public class Clan implements ConfigurationSerializable{
         map.put("points", points);
         return map;
         
+    }
+    //#region save
+    public void save(){
+        try {
+            clanConfig.save(clanFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void loadInventory(List<ItemStack> items){
@@ -194,39 +198,8 @@ public class Clan implements ConfigurationSerializable{
         save();
     }
 
-    public void save(){
-        try {
-            clanConfig.save(clanFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String name;
-    private String tag;
-    private String description;
-    private UUID owner;
-    private List<UUID> members;
-    private List<UUID> officers;
-    private List<UUID> recruits;
-    private Inventory inventory;
-    private int points;
-    private int level;
-    private Location home;
-    private double balance;
-    private List<String> allies;
-    private List<String> enemies;
-    private List<ItemStack> items;
-
     public List<ItemStack> getItems() {
         return items;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public int getPoints() {
-        return points;
     }
 
     public void setPoints(int points) {
@@ -246,6 +219,29 @@ public class Clan implements ConfigurationSerializable{
             plugin.getLogger().severe("Failed to rename clan file to " + name + ".yml");
         }
     }
+    //#region Getters and Setters
+    
+    public File getClanFile() {
+        return clanFile;
+    }
+
+    public void setClanFile(File clanFile) {
+        this.clanFile = clanFile;
+    }
+
+    public FileConfiguration getClanConfig() {
+        return clanConfig;
+    }
+
+    public void setClanConfig(FileConfiguration clanConfig) {
+        this.clanConfig = clanConfig;
+    }
+    public String getName() {
+        return name;
+    }
+    public int getPoints() {
+        return points;
+    }
     public String getTag() {
         return tag;
     }
@@ -263,10 +259,7 @@ public class Clan implements ConfigurationSerializable{
     public UUID getOwner() {
         return owner;
     }
-    public void setOwner(UUID owner) {
-        this.owner = owner;
-        save();
-    }
+
     public List<UUID> getMembers() {
         return members;
     }

@@ -41,6 +41,9 @@ clan:
   full: "&cThis clan is full, members limit: {limit}!"
   rankup: "&aYou have ranked up your clan!"
   max_level: "&cYour clan is already at the maximum level!"
+  no_empty: "&cYou can't delete a clan with items in the inventory!"
+  cant_ally_enemy: "&cYou can't set an enemy to your ally!"
+  cant_self: "&cYou can't set an enemy or ally with your own clan!"
 
 war:
   start: "&e!! &7New war between &3{clan1} &7and &c{clan2} &7has started!"

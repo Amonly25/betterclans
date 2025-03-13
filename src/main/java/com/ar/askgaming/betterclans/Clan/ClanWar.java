@@ -1,13 +1,15 @@
 package com.ar.askgaming.betterclans.Clan;
 
+import com.ar.askgaming.betterclans.BetterClans;
+
 public class ClanWar {
 
-    private Clan clan1;
-    private Clan clan2;
-    private int points1;
-    private int points2;
+    private Clan clan1, clan2;
+    private int points1, points2;
     private boolean finished;
-    private long timeleft;
+    private int timeleft;
+
+    private final BetterClans plugin = BetterClans.getInstance();
 
     public ClanWar(Clan clan1, Clan clan2) {
         this.clan1 = clan1;
@@ -15,7 +17,7 @@ public class ClanWar {
         this.points1 = 0;
         this.points2 = 0;
         this.finished = false;
-        this.timeleft = 24 * 60 * 60 * 1000;
+        this.timeleft = plugin.getConfig().getInt("war.duration_minutes",1440);
     }
 
     public Clan getClan1() {
@@ -33,8 +35,11 @@ public class ClanWar {
     public int getPoints2() {
         return points2;
     }
-    public long getTimeleft() {
+    public Integer getTimeleft() {
         return timeleft;
+    }
+    public void setTimeleft(Integer timeleft) {
+        this.timeleft = timeleft;
     }
 
     public boolean isFinished() {

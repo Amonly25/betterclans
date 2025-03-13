@@ -35,6 +35,11 @@ chat_feature:
   clan: "&aClan &7chat > &8{player}: &a{message}"
   ally:  "&bAlly &7chat > &8{player}: &b{message}"
 
+war:
+  duration_minutes: 1440 #Duration of the war in minutes
+  alert_player_distance: 32 #blocks
+  override_pvp: true #Override pvp in the war
+  
 #Owner clan has all permissions
 permissions:
   officer:

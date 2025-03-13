@@ -12,18 +12,24 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.ar.askgaming.betterclans.BetterClans;
 import com.ar.askgaming.betterclans.UtilityMethods;
 import com.ar.askgaming.betterclans.Clan.Clan;
 import com.ar.askgaming.betterclans.Clan.ClanWar;
 
-public class ClansManager {
+public class ClansManager extends BukkitRunnable{
 
     private BetterClans plugin;
 
     private HashMap<String, Player> invited = new HashMap<>();
     private HashMap<Clan, Clan> invitedAlly = new HashMap<>();
+    private HashMap<String, Clan> clans = new HashMap<>();
+
+    public enum Permission {
+        INVITE, KICK, SET, HOME, ALLY, ENEMY, REMOVE, PROMOTE, DEMOTE, INVENTORY, DEPOSIT, WITHDRAW, BUY, WAR, RANKUP, DELETE
+    }
 
     public ClansManager(BetterClans plugin) {
         this.plugin = plugin;
@@ -53,9 +59,10 @@ public class ClansManager {
                 clans.put(clanName, clan);
             }
         }
+        runTaskTimer(plugin, 20*60, 20*60);
     }
 
-
+    //#region create
     public boolean createClan(String name, Player owner){
         for (String clanName : clans.keySet()) {
             if (clanName.equalsIgnoreCase(name)){
@@ -65,6 +72,7 @@ public class ClansManager {
         new Clan(name, owner);
         return true;
     }
+    //#region delete
     public boolean deleteClan(Clan clan){
         try {
             clan.getClanFile().delete();
@@ -77,49 +85,6 @@ public class ClansManager {
         return false;
     }
 
-    private HashMap<String, Clan> clans = new HashMap<>();
-
-    public HashMap<String, Clan> getClans() {
-        return clans;
-    }
-
-    public Clan getClanByPlayer(Player p){
-        UUID playerId = p.getUniqueId();
-        for (Clan clan : clans.values()) {
-            if (clan.getOwner().equals(playerId) || clan.getMembers().contains(playerId) ||
-                clan.getOfficers().contains(playerId) || clan.getRecruits().contains(playerId)) {
-                return clan;
-            }
-        }
-        return null;
-    }
-    public Clan getClanByOfflinePlayer(OfflinePlayer p){
-        UUID playerId = p.getUniqueId();
-        for (Clan clan : clans.values()) {
-            if (clan.getOwner().equals(playerId) || clan.getMembers().contains(playerId) ||
-                clan.getOfficers().contains(playerId) || clan.getRecruits().contains(playerId)) {
-                return clan;
-            }
-        }
-        return null;
-    }
-    public Clan getClanByName(String name){
-        for (Clan clan : clans.values()) {
-            if (clan.getName().equalsIgnoreCase(name)){
-                return clan;
-            }
-        }
-        return null;
-    }
-    public HashMap<String, Player> getInvited() {
-        return invited;
-    }
-    public HashMap<Clan, Clan> getInvitedAlly() {
-        return invitedAlly;
-    }
-    public boolean hasClan(Player p){
-        return getClanByPlayer(p) != null;
-    }
     public boolean isInClan(Clan clan, OfflinePlayer p){
         UUID playerId = p.getUniqueId();
         if (clan.getOwner().equals(playerId)){
@@ -152,7 +117,7 @@ public class ClansManager {
         }
         return null;
     }
-
+    //#region info
     public void sendInfo(Clan clan, Player p) {
 
         UtilityMethods u = plugin.getUtilityMethods();
@@ -186,9 +151,7 @@ public class ClansManager {
         }
         return false;
     }
-    public enum Permission {
-        INVITE, KICK, SET, HOME, ALLY, ENEMY, REMOVE, PROMOTE, DEMOTE, INVENTORY, DEPOSIT, WITHDRAW, BUY, WAR, RANKUP
-    }
+    //#region permissions
     public boolean hasClanPermission(Player p, Permission permission){
         Clan clan = getClanByPlayer(p);
         if (clan == null) {
@@ -216,8 +179,62 @@ public class ClansManager {
         p.sendMessage(plugin.getFilesManager().getLang("clan.no_permission", p));
         return false;
     }
+    
+    private void addOnlinePlayer(List<Player> players, UUID playerId) {
+        Player player = plugin.getServer().getPlayer(playerId);
+        if (player != null && player.isOnline()) {
+            players.add(player);
+        }
+    }
+    
+    private void addOnlinePlayers(List<Player> players, List<UUID> playerIds) {
+        for (UUID id : playerIds) {
+            addOnlinePlayer(players, id);
+        }
+    }
+    //#region getters
+    public boolean hasClan(Player p){
+        return getClanByPlayer(p) != null;
+    }
+    public HashMap<String, Clan> getClans() {
+        return clans;
+    }
     public List<String> getAllClans(){
         return List.copyOf(clans.keySet());
+    }
+    public HashMap<String, Player> getInvited() {
+        return invited;
+    }
+    public HashMap<Clan, Clan> getInvitedAlly() {
+        return invitedAlly;
+    }
+    public Clan getClanByPlayer(Player p){
+        UUID playerId = p.getUniqueId();
+        for (Clan clan : clans.values()) {
+            if (clan.getOwner().equals(playerId) || clan.getMembers().contains(playerId) ||
+                clan.getOfficers().contains(playerId) || clan.getRecruits().contains(playerId)) {
+                return clan;
+            }
+        }
+        return null;
+    }
+    public Clan getClanByOfflinePlayer(OfflinePlayer p){
+        UUID playerId = p.getUniqueId();
+        for (Clan clan : clans.values()) {
+            if (clan.getOwner().equals(playerId) || clan.getMembers().contains(playerId) ||
+                clan.getOfficers().contains(playerId) || clan.getRecruits().contains(playerId)) {
+                return clan;
+            }
+        }
+        return null;
+    }
+    public Clan getClanByName(String name){
+        for (Clan clan : clans.values()) {
+            if (clan.getName().equalsIgnoreCase(name)){
+                return clan;
+            }
+        }
+        return null;
     }
     public List<Player> getAllClanMembers(Clan clan) {
         List<Player> players = new ArrayList<>();
@@ -239,19 +256,6 @@ public class ClansManager {
             }
         }
         return players;
-    }
-    
-    private void addOnlinePlayer(List<Player> players, UUID playerId) {
-        Player player = plugin.getServer().getPlayer(playerId);
-        if (player != null && player.isOnline()) {
-            players.add(player);
-        }
-    }
-    
-    private void addOnlinePlayers(List<Player> players, List<UUID> playerIds) {
-        for (UUID id : playerIds) {
-            addOnlinePlayer(players, id);
-        }
     }
     //#region war
     private List<ClanWar> wars = new ArrayList<>();
@@ -277,14 +281,14 @@ public class ClansManager {
     }
 
     public void startWar(Clan clan1, Clan clan2){
-        if (isInWarWith(clan1, clan2)){
+        if (isInWarWith(clan1, clan2) || isInWarWith(clan2, clan1)){
             return;
         }
         ClanWar war = new ClanWar(clan1, clan2);
         wars.add(war);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            p.sendMessage(plugin.getFilesManager().getLang("war.start", p).replace("{clan1}", clan2.getName()).replace("{clan2}", clan2.getName()));
+            p.sendMessage(plugin.getFilesManager().getLang("war.start", p).replace("{clan1}", clan1.getName()).replace("{clan2}", clan2.getName()));
         }
     }
     public List<Clan> getWarsWith(Clan clan){
@@ -298,5 +302,25 @@ public class ClansManager {
             }
         }
         return warsWith;
+    }
+
+    @Override
+    public void run() {
+        if (wars.isEmpty()){
+            return;
+        }
+        for (ClanWar war : wars) {
+            if (war.isFinished()){
+                continue;
+            }
+            war.setTimeleft(war.getTimeleft() - 1);
+            if (war.getTimeleft() <= 0){
+                war.setFinished(true);
+                wars.remove(war);
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    p.sendMessage(plugin.getFilesManager().getLang("war.end", p).replace("{clan1}", war.getClan1().getName()).replace("{clan2}", war.getClan2().getName()));
+                }
+            }
+        }
     }
 }

@@ -2,12 +2,14 @@ C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\bett
 C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\Clan\Clan.java
 C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\Clan\ClanChat.java
 C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\Clan\ClanShop.java
+C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\Clan\ClanWar.java
 C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\Commands.java
 C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\Listeners\AsyncPlayerChatListener.java
 C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\Listeners\EntityDamageByEntityListener.java
 C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\Listeners\InventoryClickListener.java
 C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\Listeners\InventoryCloseListener.java
 C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\Listeners\PlayerDeathListener.java
+C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\Listeners\PlayerMoveListener.java
 C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\Managers\ClansManager.java
 C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\Managers\FilesManager.java
 C:\Users\Luisito\Desktop\vs_code\betterclans\src\main\java\com\ar\askgaming\betterclans\PlayerHolders.java

@@ -44,9 +44,11 @@ public class EntityDamageByEntityListener implements Listener {
             if (damagerClan == null || damagedClan == null) {
                 return;
             }
-            if (clansManager.isInWarWith(damagerClan, damagedClan)) {
-                event.setCancelled(false);
-                return;
+            if (clansManager.isInWarWith(damagerClan, damagedClan) || clansManager.isInWarWith(damagedClan, damagerClan)) {
+                if (plugin.getConfig().getBoolean("war.override_pvp",true)){
+                    event.setCancelled(false);
+                    return;
+                }
             }
 
             if (clansManager.isAlly(damager, damaged)) {

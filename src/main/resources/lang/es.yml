@@ -31,7 +31,7 @@ clan:
   ally_removed: "&a¡Has eliminado la alianza con el clan {clan}!"
   ally_request: "&a¡El clan {clan} ha solicitado una alianza contigo! Usa /clan ally {clan} para aceptar."
   enemy: "&a¡Has hecho enemigo al clan {clan}!"
-  enemy_remove: "&c¡Has eliminado al clan {clan} como enemigo!"
+  enemy_removed: "&c¡Has eliminado al clan {clan} como enemigo!"
   war: "&a¡Has declarado la guerra al clan {clan}!"
   chat: "&a¡Has cambiado al chat {type}!"
   demote: "&a¡Has degradado a {player} en tu clan!"
@@ -41,6 +41,15 @@ clan:
   full: "&c¡Este clan está lleno, límite de miembros: {limit}!"
   rankup: "&a¡Has mejorado el rango de tu clan!"
   max_level: "&c¡Tu clan ya está en el nivel máximo!"
+  no_empty: "&c¡No puedes eliminar un clan con objetos en el inventario!"
+  cant_ally_enemy: "&c¡No puedes convertir a un enemigo en tu aliado!"
+  cant_self: "&c¡No puedes establecer un enemigo o aliado con tu propio clan!"
+
+war:
+  start: "&e!! &7¡Nueva guerra entre &3{clan1} &7y &c{clan2} &7ha comenzado!"
+  end: "&e¡La guerra entre {clan1} y {clan2} ha terminado!"
+  already_in: "&c¡Ya estás en guerra con este clan!"
+  near: "&c¡Estás cerca de {player} de un clan enemigo!"
 
 economy:
   not_enough: "&c¡No tienes suficiente dinero, necesario: {amount}!"

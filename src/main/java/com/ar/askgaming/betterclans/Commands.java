@@ -35,9 +35,14 @@ public class Commands implements TabExecutor{
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1){
-            return List.of("create", "remove", "inventory", "set", "home", "invite","deposit","withdraw", 
+            return List.of("create", "delete", "inventory", "set", "home", "invite","deposit","withdraw", 
             "join", "leave", "kick", "ally", "enemy", "war","shop","help","info","list","chat","top");
-        } 
+        }
+        if (args.length == 2){
+            if (args[0].equalsIgnoreCase("set")){
+                return List.of("home", "tag", "description", "name");
+            }
+        }
         return null;
     }
 
@@ -82,7 +87,7 @@ public class Commands implements TabExecutor{
             case "create":
                 createClan(p, args);
                 break;
-            case "remove":
+            case "delete":
                 deleteClan(p, args);
                 break;
             case "inventory":
@@ -203,7 +208,24 @@ public class Commands implements TabExecutor{
     }
     //#region delete
     public void deleteClan(Player p, String[] args){
+        
         Clan clan = clans.getClanByPlayer(p);
+
+        if (!clans.hasClanPermission(p, Permission.DELETE)){
+            p.sendMessage(files.getLang("clan.no_permission", p));
+            return;
+        }
+        boolean isEmpty = true;
+        for (ItemStack item : clan.getInventory().getContents()){
+            if (item != null){
+                isEmpty = false;
+                break;
+            }
+        }
+        if (!isEmpty){
+            p.sendMessage(files.getLang("clan.no_empty", p));
+            return;
+        }
         if (clans.deleteClan(clan)){
             Bukkit.getOnlinePlayers().forEach(player -> {
                 player.sendMessage(files.getLang("misc.delete_broadcast", p).replace("{clan}", clan.getName()));
@@ -231,65 +253,56 @@ public class Commands implements TabExecutor{
     //#region set
     public void set(Player p, String[] args){
         Clan clan = clans.getClanByPlayer(p);
-        if (clan == null){
-            p.sendMessage(files.getLang("clan.no_clan", p));
-            return;
-        }
+
         if (args.length < 2){
             p.sendMessage(files.getLang("commands.invalid_usage", p));
             return;
         }
-
-        if (!clans.hasClanPermission(p, Permission.valueOf(args[0].toUpperCase()))){
+        
+        if (!clans.hasClanPermission(p, Permission.SET)){
+            p.sendMessage(files.getLang("clan.no_permission", p));
             return;
         }
 
-        String s = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
-        if (!plugin.getUtilityMethods().isAlphaNumeric(s)){
+        String key = args[1].toLowerCase();
+        String value = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+    
+        if (!plugin.getUtilityMethods().isAlphaNumeric(value)) {
             p.sendMessage(files.getLang("commands.invalid_name", p));
             return;
         }
-        String set = "";
-        switch (args[1].toLowerCase()) {
-            case "home":
-                clan.setHome(p.getLocation());
-                set = "home";
-                break;
-            case "tag":
-                Clan tag = clans.getClanByTag(s);
-                if (tag != null){
-                    p.sendMessage(files.getLang("clan.tag_exists", p));
-                    return;
-                }
-                if (plugin.getUtilityMethods().hasValidLength(s, 3, 8)){
-                    clan.setTag(s);
-                    set = "tag";
-                } else p.sendMessage(files.getLang("commands.character_limit", p).replace("{min}", "3").replace("{max}", "8"));
-   
-                break;
-            case "description":
-                if (plugin.getUtilityMethods().hasValidLength(s, 8, 32)){
-                    clan.setDescription(s);
-                    set = "description";
-                } else p.sendMessage(files.getLang("commands.character_limit", p).replace("{min}", "8").replace("{max}", "32"));
-                break;  
-            case "name":
-                Clan other = clans.getClanByName(s);
-                if (other != null){
-                    p.sendMessage(files.getLang("clan.already_exists", p));
-                    return;
-                }
-                if (plugin.getUtilityMethods().hasValidLength(s, 6, 16)){
-                    clan.setName(s);
-                    set = "name";
-                } else p.sendMessage(files.getLang("commands.character_limit", p).replace("{min}", "6").replace("{max}", "16"));
-                break;      
-            default:
-                p.sendMessage(files.getLang("commands.invalid_usage", p));
-                break;
-        }
-        p.sendMessage(files.getLang("clan.set", p).replace("{set}", set));
+    
+        // Mapeo de acciones
+        Map<String, Runnable> actions = new HashMap<>();
+        actions.put("home", () -> {
+            clan.setHome(p.getLocation());
+            p.sendMessage(files.getLang("clan.set", p).replace("{set}", "home"));
+        });
+        actions.put("tag", () -> setClanAttribute(p, clan, value, 3, 8, "tag", () -> clan.setTag(value), clans.getClanByTag(value), "clan.tag_exists"));
+        actions.put("description", () -> setClanAttribute(p, clan, value, 8, 32, "description", () -> clan.setDescription(value), null, null));
+        actions.put("name", () -> setClanAttribute(p, clan, value, 6, 16, "name", () -> clan.setName(value), clans.getClanByName(value), "clan.already_exists"));
+
+        // Ejecuta la acción correspondiente o envía error por defecto
+        actions.getOrDefault(key, () -> p.sendMessage(files.getLang("commands.invalid_usage", p))).run();
     }
+
+    private void setClanAttribute(Player p, Clan clan, String value, int min, int max, String attribute, Runnable setter, Clan existingClan, String existsLangKey) {
+        if (existingClan != null) {
+            p.sendMessage(files.getLang(existsLangKey, p));
+            return;
+        }
+
+        if (!plugin.getUtilityMethods().hasValidLength(value, min, max)) {
+            p.sendMessage(files.getLang("commands.character_limit", p)
+                    .replace("{min}", String.valueOf(min))
+                    .replace("{max}", String.valueOf(max)));
+            return;
+        }
+
+        setter.run();
+        p.sendMessage(files.getLang("clan.set", p).replace("{set}", attribute));
+    }
+
     //#region home
     public void home(Player p, String[] args){
         Clan clan = clans.getClanByPlayer(p);
@@ -608,7 +621,7 @@ public class Commands implements TabExecutor{
             p.sendMessage(files.getLang("clan.not_enemy", p));
             return;
         }
-        if (clans.isInWarWith(clan, enemy)){
+        if (clans.isInWarWith(clan, enemy) || clans.isInWarWith(enemy, clan)){
             p.sendMessage(files.getLang("war.already_in", p));
             return;
         }

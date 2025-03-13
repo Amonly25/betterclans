@@ -20,10 +20,10 @@ import net.milkbowl.vault.economy.Economy;
 
 public class BetterClans extends JavaPlugin {
 
-
     public void onEnable() {
 
         saveDefaultConfig();
+        instance = this;
 
         ConfigurationSerialization.registerClass(Clan.class,"Clan");
 
@@ -81,6 +81,7 @@ public class BetterClans extends JavaPlugin {
     private ClanChat clanChat;
     private Economy vaultEconomy;
     private ClanShop clanShop;
+    private static BetterClans instance;
 
     public void setClanShop(ClanShop clanShop) {
         this.clanShop = clanShop;
@@ -103,5 +104,8 @@ public class BetterClans extends JavaPlugin {
     }
     public ClansManager getClansManager() {
         return clansManager;
+    }
+    public static BetterClans getInstance() {
+        return instance;
     }
 }
