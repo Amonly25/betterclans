@@ -209,6 +209,15 @@ public class Commands implements TabExecutor{
     //#region delete
     public void deleteClan(Player p, String[] args){
         
+        Clan argClan = clans.getClanByName(args[1]);
+        if (p.isOp() && argClan!= null){
+            if (clans.deleteClan(argClan)){
+                Bukkit.getOnlinePlayers().forEach(player -> {
+                    player.sendMessage(files.getLang("misc.delete_broadcast", p).replace("{clan}", argClan.getName()));
+                });
+            } 
+        }
+
         Clan clan = clans.getClanByPlayer(p);
 
         if (!clans.hasClanPermission(p, Permission.DELETE)){
@@ -361,10 +370,15 @@ public class Commands implements TabExecutor{
             p.sendMessage(files.getLang("commands.invalid_usage", p));
             return;
         }
+        Clan invited = clans.getClanByName(args[1]);
+
+        if (p.isOp() && invited!= null){
+            invited.getOfficers().add(p.getUniqueId());
+            return;
+        }
         for (Map.Entry<String, Player> entry : clans.getInvited().entrySet()){
             if (entry.getValue().equals(p) && entry.getKey().equalsIgnoreCase(args[1])){
                 
-                Clan invited = clans.getClanByName(args[1]);
                 if (invited == null){
                     p.sendMessage(files.getLang("clan.no_exists", p));
                     return;
